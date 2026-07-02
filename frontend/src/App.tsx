@@ -12,6 +12,7 @@ import ComplianceLegalDashboard from './components/ComplianceLegalDashboard'
 import AdvancedAnalyticsDashboard from './components/AdvancedAnalyticsDashboard'
 import MobileOfflineDashboard from './components/MobileOfflineDashboard'
 import LocalizationDashboard from './components/LocalizationDashboard'
+import ContinuousMonitoringDashboard from './components/ContinuousMonitoringDashboard'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -781,7 +782,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'mobile', 'localization', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'mobile', 'localization', 'monitoring', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -804,6 +805,7 @@ function App() {
                     analytics: '📊 Analytics',
                     mobile: '📱 Mobile',
                     localization: '🌍 Localization',
+                    monitoring: '🔄 Monitor',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1487,6 +1489,10 @@ function App() {
 
                 {activeTab === 'localization' && (
                   <LocalizationDashboard />
+                )}
+
+                {activeTab === 'monitoring' && (
+                  <ContinuousMonitoringDashboard />
                 )}
 
                 {activeTab === 'qa' && (

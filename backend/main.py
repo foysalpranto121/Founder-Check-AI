@@ -20,6 +20,7 @@ from app.routes.compliance_legal import router as compliance_legal_router
 from app.routes.advanced_analytics import router as advanced_analytics_router
 from app.routes.mobile_offline import router as mobile_offline_router
 from app.routes.localization import router as localization_router
+from app.routes.continuous_monitoring import router as continuous_monitoring_router
 import os
 import json
 from datetime import datetime
@@ -82,6 +83,9 @@ app.include_router(mobile_offline_router)
 
 # Include localization routes
 app.include_router(localization_router)
+
+# Include continuous monitoring routes
+app.include_router(continuous_monitoring_router)
 
 # ============================================================================
 # Models
