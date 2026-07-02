@@ -10,6 +10,7 @@ from llm_flexible import (
     analyze_competitors, analyze_bangladesh_impact, analyze_swot, generate_gtm_strategy, assess_risks, assess_founder_fit
 )
 from app.services.financial_engine import calculate_financial_projections
+from app.routes.collaboration import router as collaboration_router
 import os
 import json
 from datetime import datetime
@@ -42,6 +43,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include collaboration routes
+app.include_router(collaboration_router)
 
 # ============================================================================
 # Models

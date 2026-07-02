@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { generateEnhancedPDF } from './utils/enhancedPdfGenerator'
 import FinancialDashboard from './components/FinancialDashboard'
+import CollaborationHub from './components/CollaborationHub'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -771,7 +772,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -784,6 +785,7 @@ function App() {
                     risks: '⚠️ Risks',
                     founder: '👤 Founder Fit',
                     financial: '💰 Financial',
+                    collaboration: '🤝 Collaborate',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1422,6 +1424,12 @@ function App() {
                   <FinancialDashboard
                     financial={analysis.financial_projections}
                     startup_title={analysis.idea_extraction?.title || 'Your Startup'}
+                  />
+                )}
+
+                {activeTab === 'collaboration' && (
+                  <CollaborationHub
+                    analysis_id={analysis.analysis_id}
                   />
                 )}
 
