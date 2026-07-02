@@ -11,6 +11,7 @@ import StartupSchoolDashboard from './components/StartupSchoolDashboard'
 import ComplianceLegalDashboard from './components/ComplianceLegalDashboard'
 import AdvancedAnalyticsDashboard from './components/AdvancedAnalyticsDashboard'
 import MobileOfflineDashboard from './components/MobileOfflineDashboard'
+import LocalizationDashboard from './components/LocalizationDashboard'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -780,7 +781,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'mobile', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'mobile', 'localization', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -802,6 +803,7 @@ function App() {
                     compliance: '🔐 Legal',
                     analytics: '📊 Analytics',
                     mobile: '📱 Mobile',
+                    localization: '🌍 Localization',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1481,6 +1483,10 @@ function App() {
 
                 {activeTab === 'mobile' && (
                   <MobileOfflineDashboard />
+                )}
+
+                {activeTab === 'localization' && (
+                  <LocalizationDashboard />
                 )}
 
                 {activeTab === 'qa' && (
