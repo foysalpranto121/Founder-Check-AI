@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { generateEnhancedPDF } from './utils/enhancedPdfGenerator'
+import FinancialDashboard from './components/FinancialDashboard'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -770,7 +771,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -782,6 +783,7 @@ function App() {
                     gtm: '🚀 GTM',
                     risks: '⚠️ Risks',
                     founder: '👤 Founder Fit',
+                    financial: '💰 Financial',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1414,6 +1416,13 @@ function App() {
                       </div>
                     </div>
                   </div>
+                )}
+
+                {activeTab === 'financial' && analysis.financial_projections && (
+                  <FinancialDashboard
+                    financial={analysis.financial_projections}
+                    startup_title={analysis.idea_extraction?.title || 'Your Startup'}
+                  />
                 )}
 
                 {activeTab === 'qa' && (
