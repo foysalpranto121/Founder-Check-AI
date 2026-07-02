@@ -219,7 +219,7 @@
   - Legal requirement tracking
   - Approval status monitoring
 
-- **Legal Document Generator**
+- **Legal Document Generator** kegal
   - Terms of Service templates
   - Privacy Policy auto-generator
   - Founder agreements

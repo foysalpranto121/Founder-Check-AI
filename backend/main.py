@@ -68,6 +68,9 @@ app.include_router(education_resources_router)
 # Include startup school routes
 app.include_router(startup_school_router)
 
+# Include compliance & legal routes
+app.include_router(compliance_legal_router)
+
 # ============================================================================
 # Models
 # ============================================================================
