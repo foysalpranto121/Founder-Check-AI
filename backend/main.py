@@ -13,6 +13,7 @@ from app.services.financial_engine import calculate_financial_projections
 from app.routes.collaboration import router as collaboration_router
 from app.routes.market_intelligence import router as market_intelligence_router
 from app.routes.product_validation import router as product_validation_router
+from app.routes.platform_integrations import router as platform_integrations_router
 import os
 import json
 from datetime import datetime
@@ -54,6 +55,9 @@ app.include_router(market_intelligence_router)
 
 # Include product validation routes
 app.include_router(product_validation_router)
+
+# Include platform integrations routes
+app.include_router(platform_integrations_router)
 
 # ============================================================================
 # Models

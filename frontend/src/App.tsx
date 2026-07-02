@@ -5,6 +5,7 @@ import FinancialDashboard from './components/FinancialDashboard'
 import CollaborationHub from './components/CollaborationHub'
 import MarketIntelligenceDashboard from './components/MarketIntelligenceDashboard'
 import ProductValidationDashboard from './components/ProductValidationDashboard'
+import PlatformIntegrationsDashboard from './components/PlatformIntegrationsDashboard'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -774,7 +775,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -790,6 +791,7 @@ function App() {
                     collaboration: '🤝 Collaborate',
                     market: '🌍 Market Intel',
                     validation: '🎯 Product Validation',
+                    integrations: '🔌 Integrations',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1445,6 +1447,10 @@ function App() {
 
                 {activeTab === 'validation' && (
                   <ProductValidationDashboard />
+                )}
+
+                {activeTab === 'integrations' && (
+                  <PlatformIntegrationsDashboard />
                 )}
 
                 {activeTab === 'qa' && (
