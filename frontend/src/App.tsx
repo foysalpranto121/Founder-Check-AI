@@ -9,6 +9,7 @@ import PlatformIntegrationsDashboard from './components/PlatformIntegrationsDash
 import EducationResourcesDashboard from './components/EducationResourcesDashboard'
 import StartupSchoolDashboard from './components/StartupSchoolDashboard'
 import ComplianceLegalDashboard from './components/ComplianceLegalDashboard'
+import AdvancedAnalyticsDashboard from './components/AdvancedAnalyticsDashboard'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -778,7 +779,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -798,6 +799,7 @@ function App() {
                     education: '📚 Learn',
                     school: '🎓 School',
                     compliance: '🔐 Legal',
+                    analytics: '📊 Analytics',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1469,6 +1471,10 @@ function App() {
 
                 {activeTab === 'compliance' && (
                   <ComplianceLegalDashboard />
+                )}
+
+                {activeTab === 'analytics' && (
+                  <AdvancedAnalyticsDashboard />
                 )}
 
                 {activeTab === 'qa' && (
