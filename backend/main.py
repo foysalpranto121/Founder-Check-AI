@@ -1,10 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from database import init_db, get_db, engine, Base
+from sqlalchemy.orm import Session
 import os
 
 load_dotenv()
+
+# Initialize database tables
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="FounderCheck API",

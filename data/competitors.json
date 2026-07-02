@@ -1,0 +1,154 @@
+{
+  "competitors": [
+    {
+      "id": 1,
+      "name": "Foodpanda",
+      "sector": "food_delivery",
+      "status": "active",
+      "description": "Food delivery platform with restaurants and cloud kitchens",
+      "funding": "Series C $30M",
+      "lessons_learned": "Network effects crucial - need both restaurants and users. Customer acquisition expensive in competitive market.",
+      "source": "Crunchbase"
+    },
+    {
+      "id": 2,
+      "name": "Pathao",
+      "sector": "logistics",
+      "status": "active",
+      "description": "Multi-service platform: ride-sharing, delivery, payment",
+      "funding": "Series C $50M",
+      "lessons_learned": "Super-app strategy works - leverage existing base for new services. Unit economics critical for profitability.",
+      "source": "TechStartupBD"
+    },
+    {
+      "id": 3,
+      "name": "bKash",
+      "sector": "fintech",
+      "status": "active",
+      "description": "Mobile financial services and digital wallet provider",
+      "funding": "Series B $150M",
+      "lessons_learned": "First-mover advantage in MFS market huge. Agent network is key differentiator. Regulatory approval non-negotiable.",
+      "source": "Future Startup"
+    },
+    {
+      "id": 4,
+      "name": "Nagad",
+      "sector": "fintech",
+      "status": "active",
+      "description": "Digital payment and money transfer service",
+      "funding": "Backed by IDLC",
+      "lessons_learned": "Can disrupt entrenched players with better UX. Speed to market matters. Interoperability critical.",
+      "source": "Bangladesh Startups"
+    },
+    {
+      "id": 5,
+      "name": "10Minute",
+      "sector": "quick_commerce",
+      "status": "active",
+      "description": "Q-commerce: 10 minute grocery delivery",
+      "funding": "Series A $5M",
+      "lessons_learned": "Hyperlocal model works. Micro-fulfillment centers are capital intensive. Customer retention harder than acquisition.",
+      "source": "Crunchbase"
+    },
+    {
+      "id": 6,
+      "name": "Pickaboo",
+      "sector": "ecommerce",
+      "status": "acquired",
+      "description": "Electronics e-commerce platform, acquired by Daraz",
+      "funding": "Seed Stage",
+      "lessons_learned": "Hard to compete against global players. Acquisition more likely exit than IPO. Niche segments better.",
+      "source": "Exit Bangladesh"
+    },
+    {
+      "id": 7,
+      "name": "Shurjo",
+      "sector": "agritech",
+      "status": "active",
+      "description": "Agricultural marketplace connecting farmers to buyers",
+      "funding": "Series A $2M",
+      "lessons_learned": "Agriculture sector huge but execution challenging. Farmer adoption requires trust building. Logistics complex.",
+      "source": "Startup Bangladesh"
+    },
+    {
+      "id": 8,
+      "name": "Ting",
+      "sector": "energy",
+      "status": "active",
+      "description": "Solar and renewable energy solutions for homes",
+      "funding": "Series B $10M",
+      "lessons_learned": "Deep tech requires capital. Financing options critical for adoption. Environmental impact is competitive moat.",
+      "source": "ClimateVC"
+    },
+    {
+      "id": 9,
+      "name": "Courierbox",
+      "sector": "logistics",
+      "status": "active",
+      "description": "Courier and parcel delivery service",
+      "funding": "Seed Stage",
+      "lessons_learned": "Logistics competitive market. Last-mile delivery is profit killer. B2B contracts more profitable than B2C.",
+      "source": "Startup Bangladesh"
+    },
+    {
+      "id": 10,
+      "name": "Shebaot",
+      "sector": "healthtech",
+      "status": "active",
+      "description": "Telemedicine and health consultation platform",
+      "funding": "Series A $1M",
+      "lessons_learned": "Healthcare regulation strict - need compliance expertise. Doctor supply chain bottleneck. Trust is currency.",
+      "source": "MedTech Bangladesh"
+    },
+    {
+      "id": 11,
+      "name": "Taskhive",
+      "sector": "hrtech",
+      "status": "active",
+      "description": "HR and recruitment platform for SMEs",
+      "funding": "Pre-seed",
+      "lessons_learned": "SME segment has low spending power. B2B SaaS requires long sales cycles. Education/training needed.",
+      "source": "Startup Bangladesh"
+    },
+    {
+      "id": 12,
+      "name": "EduTech Platform (defunct)",
+      "sector": "edtech",
+      "status": "defunct",
+      "description": "Online education platform, shut down during COVID",
+      "funding": "Series Seed",
+      "lessons_learned": "EdTech market proven but crowded globally. India competition fierce. Local content/language important.",
+      "source": "Failed Startups BD"
+    },
+    {
+      "id": 13,
+      "name": "Zolve",
+      "sector": "fintech",
+      "status": "active",
+      "description": "Diaspora fintech for Bangladeshi expats",
+      "funding": "Series A $5M",
+      "lessons_learned": "Diaspora segment has high spending power. Remittance market lucrative. Regulatory approval complex.",
+      "source": "Crunchbase"
+    },
+    {
+      "id": 14,
+      "name": "iSpace",
+      "sector": "coworking",
+      "status": "active",
+      "description": "Co-working and office space provider",
+      "funding": "Seed Stage",
+      "lessons_learned": "Real estate plays require capital. Occupancy rates critical KPI. B2B and B2C both important.",
+      "source": "Startup Bangladesh"
+    },
+    {
+      "id": 15,
+      "name": "Aamar Pad",
+      "sector": "housing",
+      "status": "active",
+      "description": "Rental platform for apartment and flat listings",
+      "funding": "Series A $1.5M",
+      "lessons_learned": "Real estate high trust barrier. Commission model tested. Multiple stakeholder management complex.",
+      "source": "PropTech BD"
+    }
+  ]
+}

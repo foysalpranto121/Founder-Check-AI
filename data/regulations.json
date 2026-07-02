@@ -1,0 +1,196 @@
+{
+  "regulations": [
+    {
+      "id": 1,
+      "title": "Corporate Income Tax Registration",
+      "regulator": "National Board of Revenue (NBR)",
+      "category": "tax",
+      "sector": "general",
+      "description": "All companies earning income in Bangladesh must register for tax with NBR and file annual returns",
+      "requirements": [
+        "Business registration certificate from RJSC",
+        "TIN (Tax Identification Number) registration",
+        "Form with company details and financial information"
+      ],
+      "fees": {
+        "registration": "Free",
+        "annual": "Based on income slab"
+      },
+      "source_url": "https://nbr.gov.bd"
+    },
+    {
+      "id": 2,
+      "title": "VAT Registration",
+      "regulator": "National Board of Revenue (NBR)",
+      "category": "tax",
+      "sector": "general",
+      "description": "Businesses with annual turnover above 300,000 BDT must register for VAT",
+      "requirements": [
+        "Annual turnover above 300,000 BDT",
+        "Business registration",
+        "Tax ID (TIN)"
+      ],
+      "fees": {
+        "registration": "Free",
+        "filing": "Quarterly/Monthly returns"
+      },
+      "source_url": "https://nbr.gov.bd"
+    },
+    {
+      "id": 3,
+      "title": "Company Registration (RJSC)",
+      "regulator": "Registrar of Joint Stock Companies and Firms (RJSC)",
+      "category": "registration",
+      "sector": "general",
+      "description": "Legal requirement to register companies with RJSC before starting operations",
+      "requirements": [
+        "2 shareholders minimum",
+        "Memorandum and Articles of Association",
+        "Initial share capital",
+        "Director information"
+      ],
+      "fees": {
+        "registration": "500-5000 BDT depending on capital",
+        "processing": "7-15 days"
+      },
+      "source_url": "https://rjsc.gov.bd"
+    },
+    {
+      "id": 4,
+      "title": "Trade License",
+      "regulator": "City Corporation / Municipality",
+      "category": "licensing",
+      "sector": "general",
+      "description": "Required for all retail and commercial establishments in urban areas",
+      "requirements": [
+        "Ownership proof or lease agreement",
+        "Business location address",
+        "Business type classification",
+        "Passport/NID of owner"
+      ],
+      "fees": {
+        "dhaka_dncc": "500-5000 BDT per year",
+        "dhaka_dscc": "500-5000 BDT per year",
+        "other_cities": "200-2000 BDT per year"
+      },
+      "source_url": "https://dncc.gov.bd"
+    },
+    {
+      "id": 5,
+      "title": "BIDA Registration (FDI)",
+      "regulator": "Bangladesh Investment Development Authority (BIDA)",
+      "category": "investment",
+      "sector": "general",
+      "description": "Foreign Direct Investment projects with more than 300,000 USD can register with BIDA for incentives",
+      "requirements": [
+        "Foreign investor documentation",
+        "Project feasibility report",
+        "Business plan",
+        "Capital investment proof"
+      ],
+      "fees": {
+        "registration": "Based on project",
+        "processing": "30-60 days"
+      },
+      "source_url": "https://bida.gov.bd"
+    },
+    {
+      "id": 6,
+      "title": "Food Business License (BSTI)",
+      "regulator": "Bangladesh Standards and Testing Institution (BSTI)",
+      "category": "licensing",
+      "sector": "food",
+      "description": "Mandatory for food production, processing, and distribution businesses",
+      "requirements": [
+        "BSTI certification",
+        "Food safety audit",
+        "Hygiene standards compliance",
+        "Product testing report"
+      ],
+      "fees": {
+        "certification": "2000-10000 BDT",
+        "renewal": "Annually"
+      },
+      "source_url": "https://bsti.gov.bd"
+    },
+    {
+      "id": 7,
+      "title": "Telecom License (BTRC)",
+      "regulator": "Bangladesh Telecommunication Regulatory Commission (BTRC)",
+      "category": "licensing",
+      "sector": "telecom",
+      "description": "Required for any telecom/mobile/ISP services",
+      "requirements": [
+        "Company registration",
+        "Technical specification",
+        "Frequency allocation request",
+        "Security clearance",
+        "Financial capacity proof"
+      ],
+      "fees": {
+        "license": "Very high - millions BDT",
+        "spectrum": "Based on bandwidth"
+      },
+      "source_url": "https://btrc.gov.bd"
+    },
+    {
+      "id": 8,
+      "title": "Fintech Regulations",
+      "regulator": "Bangladesh Bank",
+      "category": "regulation",
+      "sector": "fintech",
+      "description": "Companies offering payment, lending, or financial services need Bangladesh Bank approval",
+      "requirements": [
+        "Mobile financial service license (for MFS)",
+        "Payment gateway compliance",
+        "KYC requirements",
+        "AML (Anti-Money Laundering) procedures"
+      ],
+      "fees": {
+        "license": "Based on service type",
+        "compliance": "Quarterly reporting"
+      },
+      "source_url": "https://bb.org.bd"
+    },
+    {
+      "id": 9,
+      "title": "E-Commerce Guidelines",
+      "regulator": "Bangladesh Bank / DoT",
+      "category": "regulation",
+      "sector": "ecommerce",
+      "description": "Guidelines for online retail and marketplace operations",
+      "requirements": [
+        "SSL certificate",
+        "Payment gateway",
+        "Consumer protection policy",
+        "Return/refund policy",
+        "Data privacy compliance"
+      ],
+      "fees": {
+        "ssl": "5000-20000 BDT/year",
+        "gateway": "Based on volume"
+      },
+      "source_url": "https://dot.gov.bd"
+    },
+    {
+      "id": 10,
+      "title": "Import/Export Registration (BTID)",
+      "regulator": "Board of Investment / Bangladesh Tariff Commission",
+      "category": "registration",
+      "sector": "import_export",
+      "description": "Required for businesses importing or exporting goods",
+      "requirements": [
+        "Company registration",
+        "TIN registration",
+        "Bank account",
+        "Import/Export registration",
+        "HS code classification"
+      ],
+      "fees": {
+        "registration": "Free",
+        "documentation": "Variable"
+      },
+      "source_url": "https://boibd.gov.bd"
+    }
+  ]
+}
