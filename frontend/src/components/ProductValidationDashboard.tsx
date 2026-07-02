@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface Feature {
   id: string;
@@ -48,7 +48,7 @@ const ProductValidationDashboard = () => {
   const [activeTab, setActiveTab] = useState<'priority' | 'customer' | 'mvp'>('priority');
   const [priorityMatrix, setPriorityMatrix] = useState<PriorityMatrix | null>(null);
   const [interviews, setInterviews] = useState<Interview[]>([]);
-  const [mvpPlan, setMvpPlan] = useState<MVPPlan | null>(null);
+  const [mvpPlan] = useState<MVPPlan | null>(null); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [showAddFeature, setShowAddFeature] = useState(false);
   const [showCreateInterview, setShowCreateInterview] = useState(false);
   const [showDefineMVP, setShowDefineMVP] = useState(false);
@@ -151,7 +151,7 @@ const ProductValidationDashboard = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const _data = await response.json();
         setMvpData({ productName: '', coreFeatures: '', niceToHave: '', launchWeeks: 8 });
         setShowDefineMVP(false);
         // Load MVP plan

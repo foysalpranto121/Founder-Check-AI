@@ -4,19 +4,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+API_KEY = os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY", "")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "auto")
 
 # Auto-detect provider based on key format
 def detect_provider():
     if not API_KEY:
         return "demo"
-    if API_KEY.startswith("sk-ant-"):
+    if API_KEY.startswith("sk-proj-"):
+        return "openai"
+    elif API_KEY.startswith("sk-ant-"):
         return "anthropic"
     elif API_KEY.startswith("sk-"):
         return "openai"
     elif API_KEY.startswith("euri-"):
-        return "custom"
+        return "demo"  # Treat euri keys as demo (invalid)
     else:
         return "demo"
 
@@ -228,18 +230,23 @@ DEMO_RESPONSES = {
 def call_openai(prompt, max_tokens=1000):
     """Call OpenAI API (requires sk- key)"""
     try:
-        import openai
-        openai.api_key = API_KEY
+        from openai import OpenAI
+        print(f"[OpenAI] Calling with key: {API_KEY[:20]}...")
+        client = OpenAI(api_key=API_KEY)
 
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
             temperature=0.7
         )
-        return response.choices[0].message.content
+        result = response.choices[0].message.content
+        print(f"[OpenAI] SUCCESS - received response")
+        return result
     except Exception as e:
-        print(f"[OpenAI Error] {e}")
+        print(f"[OpenAI Error] {type(e).__name__}: {str(e)[:300]}")
+        import traceback
+        traceback.print_exc()
         return None
 
 # ============================================================================
@@ -599,7 +606,7 @@ def assess_risks(idea_text: str, sector: str) -> dict:
     Assess critical risks for this Bangladesh startup:
     {idea_text} ({sector})
 
-    Return JSON with: high_risks (list of {risk, probability, impact, mitigation}), medium_risks (same format), overall_risk_score (1-10).
+    Return JSON with: high_risks (list of risk, probability, impact, mitigation objects), medium_risks (same format), overall_risk_score (1-10).
     RETURN ONLY JSON.
     """
 

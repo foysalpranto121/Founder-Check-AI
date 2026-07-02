@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const AdvancedAnalyticsDashboard = () => {
   const [activeTab, setActiveTab] = useState<'health' | 'visuals' | 'reports'>('health');

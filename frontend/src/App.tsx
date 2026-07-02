@@ -760,7 +760,11 @@ function App() {
                   <h2>{analysis.idea_extraction?.title || 'Analysis'}</h2>
                   <p>{analysis.idea_extraction?.description}</p>
                 </div>
-                <button onClick={() => setAnalysis(null)} className="btn-secondary">← New Analysis</button>
+                <button onClick={() => {
+                  setAnalysis(null);
+                  setIdea('');
+                  setError(null);
+                }} className="btn-secondary">← New Analysis</button>
               </div>
 
               <div className="score-card-main">

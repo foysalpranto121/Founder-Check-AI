@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const MobileOfflineDashboard = () => {
   const [activeTab, setActiveTab] = useState<'notifications' | 'offline' | 'sync'>('notifications');

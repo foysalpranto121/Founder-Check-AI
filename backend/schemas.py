@@ -34,22 +34,22 @@ class DemandAnalysis(BaseModel):
 class RegulatoryAnalysis(BaseModel):
     risk_score: float
     key_regulators: List[str]
-    critical_approvals: str
+    critical_approvals: Any  # Can be str or list
     estimated_timeline: int
-    cost_estimate: int
-    warnings: str
+    cost_estimate: Any  # Can be int or str
+    warnings: Any  # Can be str or list
 
 
 class BusinessCanvas(BaseModel):
-    key_partners: List[str]
-    key_activities: List[str]
-    key_resources: Dict[str, Any]
-    value_proposition: str
-    customer_segments: List[str]
-    channels: List[str]
-    customer_relationships: List[str]
-    revenue_streams: Dict[str, Any]
-    cost_structure: Dict[str, Any]
+    key_partners: Any
+    key_activities: Any
+    key_resources: Any
+    value_proposition: Any
+    customer_segments: Any
+    channels: Any
+    customer_relationships: Any
+    revenue_streams: Any
+    cost_structure: Any
 
 
 class InvestorQuestion(BaseModel):
