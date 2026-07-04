@@ -151,7 +151,7 @@ const ProductValidationDashboard = () => {
       });
 
       if (response.ok) {
-        const _data = await response.json();
+        await response.json();
         setMvpData({ productName: '', coreFeatures: '', niceToHave: '', launchWeeks: 8 });
         setShowDefineMVP(false);
         // Load MVP plan

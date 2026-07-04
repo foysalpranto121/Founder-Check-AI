@@ -4,28 +4,49 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY", "")
+OPENAI_KEY = os.getenv("OPENAI_API_KEY", "")
+ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "auto")
 
-# Auto-detect provider based on key format
-def detect_provider():
-    if not API_KEY:
-        return "demo"
-    if API_KEY.startswith("sk-proj-"):
+
+class LLMUnavailableError(Exception):
+    """Raised when every configured LLM provider fails for a call.
+
+    Callers must surface this as an explicit failure state. Per project
+    rules, a failed LLM call must never be papered over with demo data
+    or a fabricated score.
+    """
+
+
+def _looks_like_openai_key(key: str) -> bool:
+    """True for keys in OpenAI's sk- / sk-proj- format."""
+    return key.startswith("sk-") and not key.startswith("sk-ant-")
+
+
+def _looks_like_anthropic_key(key: str) -> bool:
+    """True for keys in Anthropic's sk-ant- format."""
+    return key.startswith("sk-ant-")
+
+
+def detect_provider() -> str:
+    """Pick the primary provider from configured keys.
+
+    Returns "demo" only when no usable key exists at all. Demo mode is an
+    explicit keyless development mode, not a fallback for failed calls.
+    """
+    if _looks_like_openai_key(OPENAI_KEY):
         return "openai"
-    elif API_KEY.startswith("sk-ant-"):
+    if _looks_like_anthropic_key(ANTHROPIC_KEY):
         return "anthropic"
-    elif API_KEY.startswith("sk-"):
-        return "openai"
-    elif API_KEY.startswith("euri-"):
-        return "demo"  # Treat euri keys as demo (invalid)
-    else:
-        return "demo"
+    return "demo"
+
 
 PROVIDER = detect_provider() if LLM_PROVIDER == "auto" else LLM_PROVIDER
 
-print(f"[LLM] Using provider: {PROVIDER}")
-print(f"[LLM] API Key format: {API_KEY[:20]}...")
+if PROVIDER == "demo":
+    print("[LLM] WARNING: no usable API key configured. DEMO MODE active - all responses are canned examples, not real analysis.")
+else:
+    print(f"[LLM] Using provider: {PROVIDER}")
 
 # ============================================================================
 # Demo Mode Responses (for testing without API keys)
@@ -224,40 +245,88 @@ DEMO_RESPONSES = {
 }
 
 # ============================================================================
-# OpenAI Implementation
+# Provider calls and dispatch
 # ============================================================================
 
-def call_openai(prompt, max_tokens=1000):
-    """Call OpenAI API (requires sk- key)"""
+def _call_openai(prompt: str, max_tokens: int) -> str:
+    """Single OpenAI chat completion. Raises on any failure."""
+    from openai import OpenAI
+    client = OpenAI(api_key=OPENAI_KEY)
+    response = client.chat.completions.create(
+        model=os.getenv("MODEL_NAME", "gpt-3.5-turbo"),
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=max_tokens,
+        temperature=0.7,
+    )
+    return response.choices[0].message.content
+
+
+def _call_anthropic(prompt: str, max_tokens: int) -> str:
+    """Single Anthropic messages call. Raises on any failure."""
+    from anthropic import Anthropic
+    client = Anthropic(api_key=ANTHROPIC_KEY)
+    msg = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=max_tokens,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return msg.content[0].text
+
+
+def _provider_chain() -> list:
+    """Primary provider first, then any other provider with a usable key."""
+    chain = []
+    if PROVIDER in ("openai", "anthropic"):
+        chain.append(PROVIDER)
+    if "openai" not in chain and _looks_like_openai_key(OPENAI_KEY):
+        chain.append("openai")
+    if "anthropic" not in chain and _looks_like_anthropic_key(ANTHROPIC_KEY):
+        chain.append("anthropic")
+    return chain
+
+
+def call_llm(prompt: str, max_tokens: int = 1000) -> str:
+    """Call the primary provider, then fall back to any other configured one.
+
+    Raises LLMUnavailableError when all providers fail so callers surface
+    an honest failure instead of a fabricated result.
+    """
+    chain = _provider_chain()
+    if not chain:
+        raise LLMUnavailableError("No LLM provider configured")
+
+    failures = []
+    for provider in chain:
+        try:
+            if provider == "openai":
+                result = _call_openai(prompt, max_tokens)
+            else:
+                result = _call_anthropic(prompt, max_tokens)
+            if not result:
+                raise ValueError("empty response")
+            return result
+        except Exception as e:
+            detail = f"{provider}: {type(e).__name__}: {str(e)[:200]}"
+            failures.append(detail)
+            print(f"[LLM] Provider failed - {detail}")
+
+    raise LLMUnavailableError("All LLM providers failed - " + " | ".join(failures))
+
+
+def _parse_json(response: str):
+    """Parse an LLM response as JSON, tolerating markdown code fences.
+
+    Raises LLMUnavailableError on unparseable output rather than
+    substituting demo data.
+    """
+    text = response.strip()
+    if text.startswith("```"):
+        lines = [l for l in text.split("\n") if not l.strip().startswith("```")]
+        text = "\n".join(lines)
     try:
-        from openai import OpenAI
-        print(f"[OpenAI] Calling with key: {API_KEY[:20]}...")
-        client = OpenAI(api_key=API_KEY)
-
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.7
-        )
-        result = response.choices[0].message.content
-        print(f"[OpenAI] SUCCESS - received response")
-        return result
-    except Exception as e:
-        print(f"[OpenAI Error] {type(e).__name__}: {str(e)[:300]}")
-        import traceback
-        traceback.print_exc()
-        return None
-
-# ============================================================================
-# Custom/Unknown API Implementation
-# ============================================================================
-
-def call_custom_api(prompt, max_tokens=1000):
-    """Call custom/unknown API"""
-    print(f"[Custom API] Using key starting with: {API_KEY[:20]}...")
-    print(f"[Custom API] Note: This key format may not be recognized")
-    return None
+        return json.loads(text)
+    except (json.JSONDecodeError, ValueError) as e:
+        raise LLMUnavailableError(f"LLM response was not valid JSON: {e}") from e
 
 # ============================================================================
 # Main LLM Functions
@@ -285,29 +354,7 @@ def extract_idea_fields(idea_text: str) -> dict:
     RETURN ONLY JSON, NO OTHER TEXT.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 500)
-    elif PROVIDER == "custom":
-        response = call_custom_api(prompt, 500)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=500,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["idea_extraction"]
-
-    if not response:
-        return DEMO_RESPONSES["idea_extraction"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["idea_extraction"]
+    return _parse_json(call_llm(prompt, 500))
 
 
 def analyze_demand(idea_text: str, target_customer: str) -> dict:
@@ -323,27 +370,7 @@ def analyze_demand(idea_text: str, target_customer: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 800)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=800,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["demand_analysis"]
-
-    if not response:
-        return DEMO_RESPONSES["demand_analysis"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["demand_analysis"]
+    return _parse_json(call_llm(prompt, 800))
 
 
 def analyze_regulatory_risks(idea_text: str, sector: str) -> dict:
@@ -360,27 +387,7 @@ def analyze_regulatory_risks(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 800)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=800,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["regulatory_analysis"]
-
-    if not response:
-        return DEMO_RESPONSES["regulatory_analysis"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["regulatory_analysis"]
+    return _parse_json(call_llm(prompt, 800))
 
 
 def generate_business_canvas(idea_text: str, sector: str) -> dict:
@@ -396,27 +403,7 @@ def generate_business_canvas(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1000)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["business_canvas"]
-
-    if not response:
-        return DEMO_RESPONSES["business_canvas"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["business_canvas"]
+    return _parse_json(call_llm(prompt, 1000))
 
 
 def generate_investor_questions(idea_text: str, sector: str) -> list:
@@ -431,27 +418,7 @@ def generate_investor_questions(idea_text: str, sector: str) -> list:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1200)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1200,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["investor_questions"]
-
-    if not response:
-        return DEMO_RESPONSES["investor_questions"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["investor_questions"]
+    return _parse_json(call_llm(prompt, 1200))
 
 
 def analyze_competitors(idea_text: str, sector: str) -> dict:
@@ -467,27 +434,7 @@ def analyze_competitors(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1000)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["competitor_analysis"]
-
-    if not response:
-        return DEMO_RESPONSES["competitor_analysis"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["competitor_analysis"]
+    return _parse_json(call_llm(prompt, 1000))
 
 
 def analyze_bangladesh_impact(idea_text: str, sector: str) -> dict:
@@ -498,9 +445,15 @@ def analyze_bangladesh_impact(idea_text: str, sector: str) -> dict:
     Analyze Bangladesh-specific impact and localization for this startup:
     {idea_text} ({sector})
 
-    Consider: Local regulations, market potential in BDT, cultural factors, economic factors, supply chain, localization recommendations.
-    Return JSON with all above fields + impact_score (1-10).
-    RETURN ONLY JSON.
+    Return ONLY valid JSON with exactly these keys:
+    - impact_score: number 1-10
+    - local_regulations: list of 3-5 short strings
+    - market_potential: string (mention BDT market size)
+    - cultural_factors: string
+    - economic_factors: string
+    - localization_recommendations: list of 3-5 short strings
+
+    Use exactly these snake_case key names. RETURN ONLY JSON, NO OTHER TEXT.
     """
 
     if PROVIDER == "openai":
@@ -570,9 +523,16 @@ def generate_gtm_strategy(idea_text: str, sector: str) -> dict:
     Create a Go-to-Market strategy for this Bangladesh startup:
     {idea_text} ({sector})
 
-    Return JSON with: phase_1, phase_2, phase_3 (execution plan), customer_acquisition (channels), pricing_strategy, partnership_targets.
-    Make it practical and Bangladesh-focused.
-    RETURN ONLY JSON.
+    Return ONLY valid JSON with exactly these keys:
+    - phase_1: string (launch plan, first 30 days)
+    - phase_2: string (growth plan, next 60 days)
+    - phase_3: string (scale plan, next 90 days)
+    - customer_acquisition: string (channels)
+    - pricing_strategy: string
+    - partnership_targets: list of 3-5 short strings
+
+    Make it practical and Bangladesh-focused. Use exactly these snake_case key names.
+    RETURN ONLY JSON, NO OTHER TEXT.
     """
 
     if PROVIDER == "openai":

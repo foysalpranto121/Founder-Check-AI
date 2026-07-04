@@ -13,6 +13,50 @@ import AdvancedAnalyticsDashboard from './components/AdvancedAnalyticsDashboard'
 import MobileOfflineDashboard from './components/MobileOfflineDashboard'
 import LocalizationDashboard from './components/LocalizationDashboard'
 import ContinuousMonitoringDashboard from './components/ContinuousMonitoringDashboard'
+import ErrorBoundary, { Defer } from './components/ErrorBoundary'
+
+/** True when the object exists and has at least one key. */
+const hasData = (obj: any) => !!obj && Object.keys(obj).length > 0
+
+/** Coerces an LLM field to a list: arrays pass through, a single value becomes a one-item list. */
+const asList = (v: any): any[] => (Array.isArray(v) ? v : v == null || v === '' ? [] : [v])
+
+/** Coerces an LLM field to displayable text, flattening lists and objects. */
+const asText = (v: any): string => {
+  if (typeof v === 'string') return v
+  if (v == null) return ''
+  if (Array.isArray(v)) return v.map(asText).join('; ')
+  if (typeof v === 'object') return Object.values(v).map(asText).join('; ')
+  return String(v)
+}
+
+/**
+ * Honest placeholder for tabs whose data comes from the extended analysis.
+ * Shows a calculating state while it runs and a retry option if it failed,
+ * instead of empty shells or fabricated numbers.
+ */
+const ExtendedPending = ({ status, label, onRetry }: { status: string; label: string; onRetry: () => void }) => (
+  <div className="section" style={{ textAlign: 'center', padding: '60px 20px' }}>
+    {status === 'loading' ? (
+      <>
+        <h3>Calculating {label}...</h3>
+        <p style={{ color: '#999', marginTop: '10px' }}>
+          The extended analysis is still running. This usually takes under a minute.
+        </p>
+      </>
+    ) : (
+      <>
+        <h3>{label} not available yet</h3>
+        <p style={{ color: '#999', marginTop: '10px' }}>
+          This section needs the extended analysis to finish before it can show real data.
+        </p>
+        <button className="btn-secondary" style={{ marginTop: '16px' }} onClick={onRetry}>
+          Run extended analysis
+        </button>
+      </>
+    )}
+  </div>
+)
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,6 +94,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('overview')
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
+  const [extendedStatus, setExtendedStatus] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle')
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
@@ -77,6 +122,7 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false)
     setAnalysis(null)
+    setExtendedStatus('idle')
     setPage('home')
   }
 
@@ -115,10 +161,37 @@ function App() {
       const data = await res.json()
       setAnalysis(data)
       setActiveTab('overview')
+      // Kick off the extended analysis in the background so the Financial,
+      // SWOT, GTM, BD Impact and Founder Fit tabs get real data.
+      if (data.analysis_id) {
+        loadExtended(data.analysis_id)
+      }
     } catch (err) {
       setError('Failed to analyze idea')
     } finally {
       setLoading(false)
+    }
+  }
+
+  /**
+   * Fetches the extended analysis (SWOT, GTM, BD Impact, Founder Fit and
+   * full financial projections) and merges it into the current analysis.
+   * Skips the merge if the user has already started a different analysis.
+   */
+  const loadExtended = async (analysisId: number) => {
+    setExtendedStatus('loading')
+    try {
+      const res = await fetch(`http://localhost:9001/api/v1/analyze/${analysisId}/extended`, {
+        method: 'POST',
+      })
+      if (!res.ok) throw new Error('Extended analysis failed')
+      const data = await res.json()
+      setAnalysis((prev: any) =>
+        prev && prev.analysis_id === analysisId ? { ...prev, ...data } : prev
+      )
+      setExtendedStatus('ready')
+    } catch {
+      setExtendedStatus('failed')
     }
   }
 
@@ -764,6 +837,7 @@ function App() {
                   setAnalysis(null);
                   setIdea('');
                   setError(null);
+                  setExtendedStatus('idle');
                 }} className="btn-secondary">← New Analysis</button>
               </div>
 
@@ -784,6 +858,10 @@ function App() {
                   </div>
                 </div>
               </div>
+
+              <p style={{ fontSize: '12px', color: '#999', margin: '10px 0 20px' }}>
+                This is an AI-generated startup assessment for exploration and learning, not investment advice or a guarantee of outcome.
+              </p>
 
               <div className="tabs">
                 {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'mobile', 'localization', 'monitoring', 'qa'].map(tab => {
@@ -821,6 +899,11 @@ function App() {
               </div>
 
               <div className="tab-content">
+                {/* Keyed by tab so the boundary resets when the user switches tabs.
+                    Defer moves JSX evaluation inside the boundary so it can catch
+                    render errors from these inline sections. */}
+                <ErrorBoundary key={activeTab}>
+                <Defer render={() => (<>
                 {activeTab === 'overview' && (
                   <div className="grid-2">
                     <div className="stat-box"><p>Sector</p><p className="stat-value">{analysis.idea_extraction?.sector}</p></div>
@@ -1162,7 +1245,10 @@ function App() {
                   </div>
                 )}
 
-                {activeTab === 'bangladesh' && (
+                {activeTab === 'bangladesh' && !hasData(analysis.bangladesh_impact) && (
+                  <ExtendedPending status={extendedStatus} label="Bangladesh market impact" onRetry={() => loadExtended(analysis.analysis_id)} />
+                )}
+                {activeTab === 'bangladesh' && hasData(analysis.bangladesh_impact) && (
                   <div className="section">
                     <h3>🇧🇩 Bangladesh Market Impact Assessment</h3>
 
@@ -1180,9 +1266,9 @@ function App() {
                       <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
                         <h4 style={{color: '#F44336', marginBottom: '14px'}}>⚖️ Local Regulations</h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
-                          {analysis.bangladesh_impact?.local_regulations?.map((r: string, i: number) => (
+                          {asList(analysis.bangladesh_impact?.local_regulations).map((r: any, i: number) => (
                             <li key={i} style={{padding: '8px 0', borderBottom: '1px solid rgba(244, 67, 54, 0.2)', color: '#ccc', fontSize: '13'}}>
-                              ✓ {r}
+                              ✓ {asText(r)}
                             </li>
                           ))}
                         </ul>
@@ -1190,17 +1276,17 @@ function App() {
 
                       <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
                         <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>💰 Market Potential</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{analysis.bangladesh_impact?.market_potential}</p>
+                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.market_potential)}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
                         <h4 style={{color: '#9C27B0', marginBottom: '14px'}}>🎭 Cultural Factors</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{analysis.bangladesh_impact?.cultural_factors}</p>
+                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.cultural_factors)}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
                         <h4 style={{color: '#FF9800', marginBottom: '14px'}}>📊 Economic Factors</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{analysis.bangladesh_impact?.economic_factors}</p>
+                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.economic_factors)}</p>
                       </div>
                     </div>
 
@@ -1210,10 +1296,10 @@ function App() {
                         Localization Strategy for Bangladesh
                       </h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px'}}>
-                        {analysis.bangladesh_impact?.localization_recommendations?.map((r: string, i: number) => (
+                        {asList(analysis.bangladesh_impact?.localization_recommendations).map((r: any, i: number) => (
                           <div key={i} style={{padding: '14px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '1px solid #00ff41', display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
                             <span style={{color: '#00ff41', fontWeight: 'bold', fontSize: '16px', marginTop: '2px'}}>✓</span>
-                            <span style={{color: '#ccc', fontSize: '13', lineHeight: '1.5'}}>{r}</span>
+                            <span style={{color: '#ccc', fontSize: '13', lineHeight: '1.5'}}>{asText(r)}</span>
                           </div>
                         ))}
                       </div>
@@ -1221,7 +1307,10 @@ function App() {
                   </div>
                 )}
 
-                {activeTab === 'swot' && (
+                {activeTab === 'swot' && !hasData(analysis.swot_analysis) && (
+                  <ExtendedPending status={extendedStatus} label="SWOT analysis" onRetry={() => loadExtended(analysis.analysis_id)} />
+                )}
+                {activeTab === 'swot' && hasData(analysis.swot_analysis) && (
                   <div className="section">
                     <h3>SWOT Analysis</h3>
                     <svg viewBox="0 0 800 600" className="swot-matrix">
@@ -1238,29 +1327,32 @@ function App() {
                       <text x="595" y="320" textAnchor="middle" fill="#F44336" fontSize="18" fontWeight="bold">🔥 THREATS</text>
 
                       {/* Strengths content */}
-                      {analysis.swot_analysis?.strengths?.slice(0, 3).map((s: string, i: number) => (
-                        <text key={i} x="30" y={70 + i * 60} fill="#ccc" fontSize="13">• {s}</text>
+                      {asList(analysis.swot_analysis?.strengths).slice(0, 3).map((s: any, i: number) => (
+                        <text key={i} x="30" y={70 + i * 60} fill="#ccc" fontSize="13">• {asText(s)}</text>
                       ))}
 
                       {/* Weaknesses content */}
-                      {analysis.swot_analysis?.weaknesses?.slice(0, 3).map((w: string, i: number) => (
-                        <text key={i} x="420" y={70 + i * 60} fill="#ccc" fontSize="13">• {w}</text>
+                      {asList(analysis.swot_analysis?.weaknesses).slice(0, 3).map((w: any, i: number) => (
+                        <text key={i} x="420" y={70 + i * 60} fill="#ccc" fontSize="13">• {asText(w)}</text>
                       ))}
 
                       {/* Opportunities content */}
-                      {analysis.swot_analysis?.opportunities?.slice(0, 3).map((o: string, i: number) => (
-                        <text key={i} x="30" y={350 + i * 60} fill="#ccc" fontSize="13">• {o}</text>
+                      {asList(analysis.swot_analysis?.opportunities).slice(0, 3).map((o: any, i: number) => (
+                        <text key={i} x="30" y={350 + i * 60} fill="#ccc" fontSize="13">• {asText(o)}</text>
                       ))}
 
                       {/* Threats content */}
-                      {analysis.swot_analysis?.threats?.slice(0, 3).map((t: string, i: number) => (
-                        <text key={i} x="420" y={350 + i * 60} fill="#ccc" fontSize="13">• {t}</text>
+                      {asList(analysis.swot_analysis?.threats).slice(0, 3).map((t: any, i: number) => (
+                        <text key={i} x="420" y={350 + i * 60} fill="#ccc" fontSize="13">• {asText(t)}</text>
                       ))}
                     </svg>
                   </div>
                 )}
 
-                {activeTab === 'gtm' && (
+                {activeTab === 'gtm' && !hasData(analysis.go_to_market) && (
+                  <ExtendedPending status={extendedStatus} label="go-to-market strategy" onRetry={() => loadExtended(analysis.analysis_id)} />
+                )}
+                {activeTab === 'gtm' && hasData(analysis.go_to_market) && (
                   <div className="section">
                     <h3>Go-to-Market Strategy</h3>
 
@@ -1274,7 +1366,7 @@ function App() {
                       <text x="150" y="220" textAnchor="middle" fill="#2196F3" fontSize="13" fontWeight="bold">LAUNCH</text>
                       <text x="150" y="240" textAnchor="middle" fill="#ccc" fontSize="11">30 days</text>
                       <rect x="30" y="260" width="240" height="30" fill="rgba(33, 150, 243, 0.1)" stroke="#2196F3" strokeWidth="1" rx="4"/>
-                      <text x="150" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{analysis.go_to_market?.phase_1?.substring(0, 40)}</text>
+                      <text x="150" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{asText(analysis.go_to_market?.phase_1).substring(0, 40)}</text>
 
                       {/* Phase 2 */}
                       <circle cx="450" cy="150" r="30" fill="#FF9800" opacity="0.9"/>
@@ -1282,7 +1374,7 @@ function App() {
                       <text x="450" y="220" textAnchor="middle" fill="#FF9800" fontSize="13" fontWeight="bold">GROWTH</text>
                       <text x="450" y="240" textAnchor="middle" fill="#ccc" fontSize="11">60 days</text>
                       <rect x="330" y="260" width="240" height="30" fill="rgba(255, 152, 0, 0.1)" stroke="#FF9800" strokeWidth="1" rx="4"/>
-                      <text x="450" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{analysis.go_to_market?.phase_2?.substring(0, 40)}</text>
+                      <text x="450" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{asText(analysis.go_to_market?.phase_2).substring(0, 40)}</text>
 
                       {/* Phase 3 */}
                       <circle cx="750" cy="150" r="30" fill="#4CAF50" opacity="0.9"/>
@@ -1290,20 +1382,20 @@ function App() {
                       <text x="750" y="220" textAnchor="middle" fill="#4CAF50" fontSize="13" fontWeight="bold">SCALE</text>
                       <text x="750" y="240" textAnchor="middle" fill="#ccc" fontSize="11">90 days</text>
                       <rect x="630" y="260" width="240" height="30" fill="rgba(76, 175, 80, 0.1)" stroke="#4CAF50" strokeWidth="1" rx="4"/>
-                      <text x="750" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{analysis.go_to_market?.phase_3?.substring(0, 40)}</text>
+                      <text x="750" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{asText(analysis.go_to_market?.phase_3).substring(0, 40)}</text>
                     </svg>
 
                     <div className="grid-2" style={{marginTop: '40px'}}>
                       <div>
                         <h4>📊 Customer Acquisition Channels</h4>
                         <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
-                          {analysis.go_to_market?.customer_acquisition}
+                          {asText(analysis.go_to_market?.customer_acquisition)}
                         </p>
                       </div>
                       <div>
                         <h4>💰 Pricing Strategy</h4>
                         <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
-                          {analysis.go_to_market?.pricing_strategy}
+                          {asText(analysis.go_to_market?.pricing_strategy)}
                         </p>
                       </div>
                     </div>
@@ -1311,10 +1403,10 @@ function App() {
                     <div style={{marginTop: '30px', padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
                       <h4 style={{color: '#9C27B0', marginBottom: '16px'}}>🤝 Key Partnership Targets</h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
-                        {analysis.go_to_market?.partnership_targets?.map((p: string, i: number) => (
+                        {asList(analysis.go_to_market?.partnership_targets).map((p: any, i: number) => (
                           <div key={i} style={{padding: '12px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '6px', border: '1px solid rgba(156, 39, 176, 0.2)', display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <span style={{fontSize: '18px'}}>🤝</span>
-                            <span style={{color: '#ccc', fontSize: '13'}}>{p}</span>
+                            <span style={{color: '#ccc', fontSize: '13'}}>{asText(p)}</span>
                           </div>
                         ))}
                       </div>
@@ -1322,7 +1414,10 @@ function App() {
                   </div>
                 )}
 
-                {activeTab === 'risks' && (
+                {activeTab === 'risks' && !hasData(analysis.risk_assessment) && (
+                  <ExtendedPending status={extendedStatus} label="risk assessment" onRetry={() => loadExtended(analysis.analysis_id)} />
+                )}
+                {activeTab === 'risks' && hasData(analysis.risk_assessment) && (
                   <div className="section">
                     <h3>Risk Assessment & Heat Map</h3>
 
@@ -1413,7 +1508,10 @@ function App() {
                   </div>
                 )}
 
-                {activeTab === 'founder' && (
+                {activeTab === 'founder' && !hasData(analysis.founder_fit) && (
+                  <ExtendedPending status={extendedStatus} label="founder fit assessment" onRetry={() => loadExtended(analysis.analysis_id)} />
+                )}
+                {activeTab === 'founder' && hasData(analysis.founder_fit) && (
                   <div className="section">
                     <h3>Founder-Market Fit Assessment</h3>
 
@@ -1442,10 +1540,10 @@ function App() {
 
                       <div style={{padding: '20px'}}>
                         <h4 style={{marginBottom: '16px', color: '#fff'}}>Required Skills</h4>
-                        {analysis.founder_fit?.required_skills?.map((s: string, i: number) => (
+                        {asList(analysis.founder_fit?.required_skills).map((s: any, i: number) => (
                           <div key={i} style={{marginBottom: '12px'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px'}}>
-                              <span style={{fontSize: '13px', color: '#ccc'}}>📌 {s}</span>
+                              <span style={{fontSize: '13px', color: '#ccc'}}>📌 {asText(s)}</span>
                             </div>
                             <div style={{height: '6px', background: 'rgba(22, 25, 47, 0.9)', borderRadius: '3px', overflow: 'hidden', border: '1px solid var(--border)'}}>
                               <div style={{height: '100%', background: 'linear-gradient(90deg, #00ff41, #00ffee)', width: `${50 + i * 15}%`, transition: 'width 0.3s'}}></div>
@@ -1458,22 +1556,22 @@ function App() {
                     <div className="grid-2">
                       <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
                         <h4 style={{color: '#FF9800', marginBottom: '12px'}}>⚠️ Experience Gaps</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{analysis.founder_fit?.experience_gaps}</p>
+                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.experience_gaps)}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
                         <h4 style={{color: '#4CAF50', marginBottom: '12px'}}>👥 Team Recommendations</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{analysis.founder_fit?.team_recommendations}</p>
+                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.team_recommendations)}</p>
                       </div>
                     </div>
 
                     <div style={{marginTop: '30px', padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
                       <h4 style={{color: '#2196F3', marginBottom: '16px'}}>📚 How to Improve Your Fit</h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px'}}>
-                        {analysis.founder_fit?.improvement_areas?.map((a: string, i: number) => (
+                        {asList(analysis.founder_fit?.improvement_areas).map((a: any, i: number) => (
                           <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.2)', display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
                             <span style={{fontSize: '18px', marginTop: '2px'}}>📚</span>
-                            <span style={{color: '#ccc', fontSize: '13'}}>{a}</span>
+                            <span style={{color: '#ccc', fontSize: '13'}}>{asText(a)}</span>
                           </div>
                         ))}
                       </div>
@@ -1481,7 +1579,12 @@ function App() {
                   </div>
                 )}
 
-                {activeTab === 'financial' && analysis.financial_projections && (
+                {/* Quick analysis only returns a placeholder here; the full structure
+                    (with key_metrics) arrives with the extended analysis */}
+                {activeTab === 'financial' && !analysis.financial_projections?.key_metrics && (
+                  <ExtendedPending status={extendedStatus} label="financial projections" onRetry={() => loadExtended(analysis.analysis_id)} />
+                )}
+                {activeTab === 'financial' && analysis.financial_projections?.key_metrics && (
                   <FinancialDashboard
                     financial={analysis.financial_projections}
                     startup_title={analysis.idea_extraction?.title || 'Your Startup'}
@@ -1546,6 +1649,8 @@ function App() {
                     )}
                   </div>
                 )}
+                </>)} />
+                </ErrorBoundary>
               </div>
             </div>
           )}
