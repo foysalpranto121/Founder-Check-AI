@@ -169,7 +169,7 @@ export const generatePDF = (analysis: AnalysisData) => {
       <div class="container">
         <!-- COVER PAGE -->
         <div class="header">
-          <div class="logo">🚀 FounderCheck</div>
+          <div class="logo">FounderCheck</div>
           <div class="subtitle">Startup Validation Report</div>
         </div>
 
@@ -182,7 +182,7 @@ export const generatePDF = (analysis: AnalysisData) => {
           <div class="score-label">Overall Readiness Score</div>
           <div class="score-value">${analysis.overall_readiness_score?.toFixed(1) || '0'}/10</div>
           <div class="score-label" style="margin-top: 10px;">
-            ${analysis.overall_readiness_score >= 8 ? '✓ STRONG' : analysis.overall_readiness_score >= 6 ? '⚠ MODERATE' : '✗ NEEDS WORK'}
+            ${analysis.overall_readiness_score >= 8 ? 'STRONG' : analysis.overall_readiness_score >= 6 ? 'MODERATE' : 'NEEDS WORK'}
           </div>
         </div>
 
@@ -195,7 +195,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- EXECUTIVE SUMMARY -->
         <div class="section">
-          <div class="section-title">📋 Executive Summary</div>
+          <div class="section-title">Executive Summary</div>
 
           <div class="stat-box">
             <div class="stat-label">SECTOR</div>
@@ -226,7 +226,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- MARKET DEMAND -->
         <div class="section">
-          <div class="section-title">📈 Market Demand Analysis</div>
+          <div class="section-title">Market Demand Analysis</div>
 
           <div class="stat-box">
             <div class="stat-label">MARKET SIZE</div>
@@ -240,18 +240,18 @@ export const generatePDF = (analysis: AnalysisData) => {
 
           <div class="section-subtitle">Key Opportunities</div>
           ${(analysis.demand_analysis?.opportunities || []).map((o: string) => `
-            <div class="list-item">✓ ${o}</div>
+            <div class="list-item">${o}</div>
           `).join('')}
 
           <div class="section-subtitle">Key Threats</div>
           ${(analysis.demand_analysis?.threats || []).map((t: string) => `
-            <div class="list-item">⚠ ${t}</div>
+            <div class="list-item">${t}</div>
           `).join('')}
         </div>
 
         <!-- REGULATORY -->
         <div class="section">
-          <div class="section-title">⚖️ Regulatory Risk Assessment</div>
+          <div class="section-title">Regulatory Risk Assessment</div>
 
           <div class="stat-box">
             <div class="stat-label">RISK SCORE</div>
@@ -277,7 +277,7 @@ export const generatePDF = (analysis: AnalysisData) => {
           <div class="list-item">${analysis.regulatory_analysis?.critical_approvals || 'N/A'}</div>
 
           ${analysis.regulatory_analysis?.warnings ? `
-            <div class="section-subtitle">⚠️ Important Warnings</div>
+            <div class="section-subtitle">Important Warnings</div>
             <div class="list-item" style="background: #fff3cd; padding: 10px; border-radius: 5px; color: #856404;">
               ${analysis.regulatory_analysis.warnings}
             </div>
@@ -286,7 +286,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- COMPETITIVE ANALYSIS -->
         <div class="section">
-          <div class="section-title">🔥 Competitive Analysis</div>
+          <div class="section-title">Competitive Analysis</div>
 
           <div class="section-subtitle">Market Overview</div>
           <table>
@@ -341,7 +341,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- BANGLADESH IMPACT -->
         <div class="section">
-          <div class="section-title">🇧🇩 Bangladesh Market Impact</div>
+          <div class="section-title">Bangladesh Market Impact</div>
 
           <div class="stat-box">
             <div class="stat-label">IMPACT SCORE</div>
@@ -353,13 +353,13 @@ export const generatePDF = (analysis: AnalysisData) => {
 
           <div class="section-subtitle">Localization Recommendations</div>
           ${(analysis.bangladesh_impact?.localization_recommendations || []).map((r: string) => `
-            <div class="list-item">✓ ${r}</div>
+            <div class="list-item">${r}</div>
           `).join('')}
         </div>
 
         <!-- SWOT -->
         <div class="section">
-          <div class="section-title">🎯 SWOT Analysis</div>
+          <div class="section-title">SWOT Analysis</div>
 
           <table>
             <tr>
@@ -394,7 +394,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- GTM -->
         <div class="section">
-          <div class="section-title">🚀 Go-to-Market Strategy</div>
+          <div class="section-title">Go-to-Market Strategy</div>
 
           <div class="section-subtitle">Phase 1: Launch (30 days)</div>
           <div class="list-item">${analysis.go_to_market?.phase_1 || 'N/A'}</div>
@@ -408,7 +408,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- RISKS -->
         <div class="section">
-          <div class="section-title">⚠️ Risk Assessment</div>
+          <div class="section-title">Risk Assessment</div>
 
           <div class="stat-box">
             <div class="stat-label">OVERALL RISK SCORE</div>
@@ -418,7 +418,7 @@ export const generatePDF = (analysis: AnalysisData) => {
           <div class="section-subtitle">High Priority Risks</div>
           ${(analysis.risk_assessment?.high_risks || []).map((r: any) => `
             <div class="list-item" style="color: #f44336;">
-              <strong>⚠ ${r.risk}</strong> (${r.probability})<br>
+              <strong>${r.risk}</strong> (${r.probability})<br>
               Impact: ${r.impact}<br>
               Mitigation: ${r.mitigation}
             </div>
@@ -427,7 +427,7 @@ export const generatePDF = (analysis: AnalysisData) => {
           <div class="section-subtitle">Medium Priority Risks</div>
           ${(analysis.risk_assessment?.medium_risks || []).map((r: any) => `
             <div class="list-item" style="color: #ff9800;">
-              <strong>⚠ ${r.risk}</strong> (${r.probability})<br>
+              <strong>${r.risk}</strong> (${r.probability})<br>
               Impact: ${r.impact}<br>
               Mitigation: ${r.mitigation}
             </div>
@@ -436,7 +436,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
         <!-- FOUNDER FIT -->
         <div class="section">
-          <div class="section-title">👤 Founder-Market Fit</div>
+          <div class="section-title">Founder-Market Fit</div>
 
           <div class="stat-box">
             <div class="stat-label">FIT SCORE</div>
@@ -450,7 +450,7 @@ export const generatePDF = (analysis: AnalysisData) => {
 
           <div class="section-subtitle">Improvement Areas</div>
           ${(analysis.founder_fit?.improvement_areas || []).map((a: string) => `
-            <div class="list-item">📚 ${a}</div>
+            <div class="list-item">${a}</div>
           `).join('')}
         </div>
 

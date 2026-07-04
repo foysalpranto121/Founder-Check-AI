@@ -526,7 +526,7 @@ class EducationResourcesService:
             'faq-4': FAQ(
                 faq_id='faq-4',
                 question='When am I ready to fundraise?',
-                answer='Readiness checklist:\n✓ Clear problem statement (customer interviews)\n✓ MVP built and launched\n✓ Early traction (50+ users or $1K+ revenue)\n✓ Founder team aligned on vision\n✓ Financial model (3-year projection)\n✓ Differentiation story\n\nMost investors want to see product-market fit signals.',
+                answer='Readiness checklist:\nClear problem statement (customer interviews)\nMVP built and launched\nEarly traction (50+ users or $1K+ revenue)\nFounder team aligned on vision\nFinancial model (3-year projection)\nDifferentiation story\n\nMost investors want to see product-market fit signals.',
                 category='fundraising',
                 helpful_count=312,
                 related_topics=['fundraising', 'pitch-deck', 'product-market-fit', 'traction'],

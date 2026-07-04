@@ -113,9 +113,9 @@ class MobileOfflineService:
         return self.send_push_notification(
             startup_id,
             'milestone',
-            f'🎯 Milestone Reached',
+            f'Milestone Reached',
             f'Congratulations! You\'ve reached: {milestone_name}',
-            {'milestone': milestone_name, 'icon': '🎯'}
+            {'milestone': milestone_name, 'icon': ''}
         )
 
     def send_competitor_alert(self, startup_id: str, competitor_name: str, alert_text: str) -> PushNotification:
@@ -123,7 +123,7 @@ class MobileOfflineService:
         return self.send_push_notification(
             startup_id,
             'competitor_alert',
-            f'📊 Competitor Alert: {competitor_name}',
+            f'Competitor Alert: {competitor_name}',
             alert_text,
             {'competitor': competitor_name}
         )
@@ -133,7 +133,7 @@ class MobileOfflineService:
         return self.send_push_notification(
             startup_id,
             'funding_news',
-            '💰 Funding News',
+            'Funding News',
             f'{news_title} - {amount}',
             {'title': news_title, 'amount': amount}
         )
@@ -143,7 +143,7 @@ class MobileOfflineService:
         return self.send_push_notification(
             startup_id,
             'market_insight',
-            '📈 Market Insight',
+            'Market Insight',
             insight,
             {'insight': insight}
         )

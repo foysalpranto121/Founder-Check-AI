@@ -177,6 +177,7 @@ function App() {
     setAnalysis(null)
     setExtendedStatus('idle')
     setAuthError(null)
+    setAuthMode('login')
     setPage('home')
   }
 
@@ -187,7 +188,7 @@ function App() {
     }
     try {
       generateEnhancedPDF(analysis)
-      alert('✓ Enterprise-grade PDF report generated successfully!')
+      alert('Enterprise-grade PDF report generated successfully!')
     } catch (err) {
       console.error('PDF export error:', err)
       alert('Failed to export PDF. Please try again.')
@@ -352,7 +353,7 @@ function App() {
             </div>
             <div className="landing-right">
               <button onClick={() => setIsDarkMode(!isDarkMode)} className="landing-theme">
-                {isDarkMode ? '☀️' : '🌙'}
+                {isDarkMode ? 'Light' : 'Dark'}
               </button>
             </div>
           </div>
@@ -398,7 +399,6 @@ function App() {
             <h2 className="section-title">Comprehensive Startup Analysis</h2>
             <div className="features-grid">
               <div className="feature-card">
-                <div className="feature-icon">📊</div>
                 <h3>Market Demand</h3>
                 <p>Deep-dive analysis with TAM/SAM/SOM breakdown, customer needs assessment, and competitive landscape evaluation.</p>
                 <ul className="feature-list">
@@ -409,7 +409,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">⚖️</div>
                 <h3>Regulatory Insights</h3>
                 <p>Bangladesh-specific compliance requirements, licensing needs, and legal considerations for your startup.</p>
                 <ul className="feature-list">
@@ -420,7 +419,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">🎯</div>
                 <h3>Business Model</h3>
                 <p>Structured business model validation using the proven business canvas framework and methodology.</p>
                 <ul className="feature-list">
@@ -431,7 +429,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">🎤</div>
                 <h3>Investor Interview</h3>
                 <p>Practice pitching with AI-powered questions and receive detailed feedback on your startup idea.</p>
                 <ul className="feature-list">
@@ -442,7 +439,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">📈</div>
                 <h3>Readiness Score</h3>
                 <p>Get a comprehensive readiness score and actionable insights to improve your startup idea.</p>
                 <ul className="feature-list">
@@ -453,7 +449,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">📑</div>
                 <h3>PDF Export</h3>
                 <p>Download your complete analysis as a professional PDF report to share with investors.</p>
                 <ul className="feature-list">
@@ -464,7 +459,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">🔥</div>
                 <h3>Competitor Analysis</h3>
                 <p>Identify direct & indirect competitors, analyze their strengths/weaknesses, and find market gaps.</p>
                 <ul className="feature-list">
@@ -475,7 +469,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">🇧🇩</div>
                 <h3>Bangladesh Impact</h3>
                 <p>Deep local market analysis including regulations, cultural factors, supply chain, and economic opportunity.</p>
                 <ul className="feature-list">
@@ -486,7 +479,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">🎯</div>
                 <h3>SWOT Analysis</h3>
                 <p>Complete SWOT matrix to identify strengths, weaknesses, opportunities and threats for your startup.</p>
                 <ul className="feature-list">
@@ -497,7 +489,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">🚀</div>
                 <h3>Go-to-Market Strategy</h3>
                 <p>Phased GTM plan with customer acquisition channels, pricing strategy, and partnership targets.</p>
                 <ul className="feature-list">
@@ -508,7 +499,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">⚠️</div>
                 <h3>Risk Assessment</h3>
                 <p>Identify critical risks with probability analysis, impact assessment, and mitigation strategies.</p>
                 <ul className="feature-list">
@@ -519,7 +509,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <div className="feature-icon">👤</div>
                 <h3>Founder Fit</h3>
                 <p>Assess your startup idea against founder expertise, identify gaps, and get improvement recommendations.</p>
                 <ul className="feature-list">
@@ -602,51 +591,51 @@ function App() {
             <h2>What We Analyze</h2>
             <div className="modules-grid">
               <div className="module">
-                <h3>📊 Market Demand</h3>
+                <h3>Market Demand</h3>
                 <p>TAM/SAM/SOM analysis, customer needs, competitive landscape</p>
               </div>
               <div className="module">
-                <h3>⚖️ Regulatory Risk</h3>
+                <h3>Regulatory Risk</h3>
                 <p>Bangladesh compliance, licensing, legal requirements</p>
               </div>
               <div className="module">
-                <h3>🎯 Business Model</h3>
+                <h3>Business Model</h3>
                 <p>Value proposition, revenue streams, key partnerships</p>
               </div>
               <div className="module">
-                <h3>🎤 Investor Pitch</h3>
+                <h3>Investor Pitch</h3>
                 <p>Answer 10 critical questions and get AI investor feedback</p>
               </div>
               <div className="module">
-                <h3>🔥 Competitors</h3>
+                <h3>Competitors</h3>
                 <p>Direct/indirect competitor analysis, market gaps, positioning</p>
               </div>
               <div className="module">
-                <h3>🇧🇩 Bangladesh Impact</h3>
+                <h3>Bangladesh Impact</h3>
                 <p>Local market potential, cultural factors, supply chain insights</p>
               </div>
               <div className="module">
-                <h3>🎯 SWOT Analysis</h3>
+                <h3>SWOT Analysis</h3>
                 <p>Comprehensive strengths, weaknesses, opportunities, threats</p>
               </div>
               <div className="module">
-                <h3>🚀 Go-to-Market</h3>
+                <h3>Go-to-Market</h3>
                 <p>Phased GTM strategy, customer acquisition, pricing approach</p>
               </div>
               <div className="module">
-                <h3>⚠️ Risk Assessment</h3>
+                <h3>Risk Assessment</h3>
                 <p>High/medium priority risks with mitigation strategies</p>
               </div>
               <div className="module">
-                <h3>👤 Founder Fit</h3>
+                <h3>Founder Fit</h3>
                 <p>Skills assessment, experience gaps, team recommendations</p>
               </div>
               <div className="module">
-                <h3>💰 Financial Projections</h3>
+                <h3>Financial Projections</h3>
                 <p>3-year revenue projections, unit economics, runway</p>
               </div>
               <div className="module">
-                <h3>📈 Readiness Score</h3>
+                <h3>Readiness Score</h3>
                 <p>Overall startup readiness with 5-10 actionable improvements</p>
               </div>
             </div>
@@ -716,11 +705,11 @@ function App() {
             </div>
           </div>
           <nav className="nav">
-            <button className="nav-item active">📋 History</button>
+            <button className="nav-item active">History</button>
           </nav>
           <div className="header-right">
             <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-              {isDarkMode ? '☀️' : '🌙'}
+              {isDarkMode ? 'Light' : 'Dark'}
             </button>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
@@ -729,7 +718,7 @@ function App() {
         <main className="main">
           <div className="container">
             <div className="card">
-              <h2>📋 Analysis History</h2>
+              <h2>Analysis History</h2>
               {history.length === 0 ? (
                 <p className="empty-state">No analyses yet</p>
               ) : (
@@ -740,7 +729,7 @@ function App() {
                       <p>{item.sector}</p>
                       <div className="history-meta">
                         <span className="score-badge">{item.overall_readiness_score}/10</span>
-                        {item.qa_completed ? <span className="qa-badge">✓ QA Done</span> : <span className="qa-badge pending">○ Pending</span>}
+                        {item.qa_completed ? <span className="qa-badge">QA Done</span> : <span className="qa-badge pending">○ Pending</span>}
                       </div>
                     </div>
                   ))}
@@ -770,11 +759,11 @@ function App() {
             </div>
           </div>
           <nav className="nav">
-            <button className="nav-item">🎤 Investor Q&A</button>
+            <button className="nav-item">Investor Q&A</button>
           </nav>
           <div className="header-right">
             <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-              {isDarkMode ? '☀️' : '🌙'}
+              {isDarkMode ? 'Light' : 'Dark'}
             </button>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
@@ -784,7 +773,7 @@ function App() {
           <div className="container qa-container">
             {qaSession?.completed ? (
               <div className="card qa-complete">
-                <h2>✓ Interview Complete!</h2>
+                <h2>Interview Complete!</h2>
                 <div className="score-display">
                   <div className="score-item">
                     <p>Q&A Score</p>
@@ -846,18 +835,18 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-left">
-          <div className="logo">🚀 FounderCheck</div>
+          <div className="logo">FounderCheck</div>
         </div>
         <nav className="nav">
-          <button className="nav-item active">📊 Analyze</button>
-          <button className="nav-item" onClick={loadHistory}>📋 History</button>
+          <button className="nav-item active">Analyze</button>
+          <button className="nav-item" onClick={loadHistory}>History</button>
         </nav>
         <div className="header-right">
           <span className={`status ${backendHealth ? 'online' : 'offline'}`}>
             {backendHealth ? '● Online' : '● Offline'}
           </span>
           <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-            {isDarkMode ? '☀️' : '🌙'}
+            {isDarkMode ? '' : ''}
           </button>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
@@ -885,11 +874,11 @@ function App() {
                 </div>
 
                 <button type="submit" disabled={loading || !idea.trim()} className="btn-primary btn-large">
-                  {loading ? '⏳ Analyzing...' : '🚀 Analyze My Idea'}
+                  {loading ? '⏳ Analyzing...' : 'Analyze My Idea'}
                 </button>
               </form>
 
-              {error && <div className="error-box">⚠️ {error}</div>}
+              {error && <div className="error-box">{error}</div>}
 
               <div className="demo-section">
                 <p className="demo-title">Try a demo:</p>
@@ -918,19 +907,27 @@ function App() {
               </div>
 
               <div className="score-card-main">
-                <div className="score-circle" style={{background: `conic-gradient(#2563eb ${(analysis.overall_readiness_score || 0) * 10}%, #e5e7eb 0)`}}>
-                  <span className="score-num">{analysis.overall_readiness_score?.toFixed(1) || '0'}</span>
+                <div className="score-circle" style={{background: `conic-gradient(var(--accent) ${(analysis.overall_readiness_score || 0) * 10}%, rgba(26, 37, 85, 0.8) 0)`}}>
+                  <div className="score-circle-inner">
+                    <span className="score-num">{analysis.overall_readiness_score != null ? analysis.overall_readiness_score.toFixed(1) : 'Pending'}</span>
+                    <span className="score-denom">/ 10</span>
+                  </div>
                 </div>
                 <div className="score-info">
                   <h3>Readiness Score</h3>
-                  <p>{analysis.overall_readiness_score >= 8 ? '✓ Strong' : analysis.overall_readiness_score >= 6 ? '⚠ Moderate' : '✗ Needs Work'}</p>
+                  <p className="score-verdict">{analysis.overall_readiness_score >= 8 ? 'Strong' : analysis.overall_readiness_score >= 6 ? 'Moderate' : 'Needs Work'}</p>
+                  <p className="score-factors">
+                    Based on demand {analysis.demand_analysis?.score != null ? `${analysis.demand_analysis.score}/10` : 'pending'},
+                    regulatory risk {analysis.regulatory_analysis?.risk_score != null ? `${analysis.regulatory_analysis.risk_score}/10` : 'pending'},
+                    and business model review
+                  </p>
                   <div className="action-buttons">
-                    <button onClick={exportToPDF} className="action-btn">📥 Export Report</button>
+                    <button onClick={exportToPDF} className="action-btn">Export Report</button>
                     <button onClick={() => {
                       const text = `Check out this startup analysis: ${analysis.idea_extraction?.title}\n\nReadiness Score: ${analysis.overall_readiness_score}/10\n\nAnalyzed with FounderCheck - The startup validator for Bangladesh\nhttps://foundercheck.io`;
                       navigator.share?.({ title: 'FounderCheck Analysis', text }) || alert('Share: ' + text);
-                    }} className="action-btn">📤 Share</button>
-                    <button onClick={() => alert('✓ Analysis saved to your history!')} className="action-btn">💾 Save</button>
+                    }} className="action-btn">Share</button>
+                    <button onClick={() => alert('Analysis saved to your history!')} className="action-btn">Save</button>
                   </div>
                 </div>
               </div>
@@ -942,29 +939,29 @@ function App() {
               <div className="tabs">
                 {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'validation', 'integrations', 'education', 'school', 'compliance', 'analytics', 'mobile', 'localization', 'monitoring', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
-                    overview: '📊 Overview',
-                    demand: '📈 Demand',
-                    regulatory: '⚖️ Regulatory',
-                    canvas: '🎯 Canvas',
-                    competitors: '🔥 Competitors',
-                    bangladesh: '🇧🇩 BD Impact',
-                    swot: '🎯 SWOT',
-                    gtm: '🚀 GTM',
-                    risks: '⚠️ Risks',
-                    founder: '👤 Founder Fit',
-                    financial: '💰 Financial',
-                    collaboration: '🤝 Collaborate',
-                    market: '🌍 Market Intel',
-                    validation: '🎯 Product Validation',
-                    integrations: '🔌 Integrations',
-                    education: '📚 Learn',
-                    school: '🎓 School',
-                    compliance: '🔐 Legal',
-                    analytics: '📊 Analytics',
-                    mobile: '📱 Mobile',
-                    localization: '🌍 Localization',
-                    monitoring: '🔄 Monitor',
-                    qa: '🎤 Interview'
+                    overview: 'Overview',
+                    demand: 'Demand',
+                    regulatory: 'Regulatory',
+                    canvas: 'Canvas',
+                    competitors: 'Competitors',
+                    bangladesh: 'BD Impact',
+                    swot: 'SWOT',
+                    gtm: 'GTM',
+                    risks: 'Risks',
+                    founder: 'Founder Fit',
+                    financial: 'Financial',
+                    collaboration: 'Collaborate',
+                    market: 'Market Intel',
+                    validation: 'Product Validation',
+                    integrations: 'Integrations',
+                    education: 'Learn',
+                    school: 'School',
+                    compliance: 'Legal',
+                    analytics: 'Analytics',
+                    mobile: 'Mobile',
+                    localization: 'Localization',
+                    monitoring: 'Monitor',
+                    qa: 'Interview'
                   };
                   return (
                     <button key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
@@ -995,17 +992,17 @@ function App() {
 
                     <div className="grid-2" style={{marginBottom: '30px'}}>
                       <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
-                        <h4 style={{color: '#2196F3', marginBottom: '8px'}}>📊 Market Size</h4>
+                        <h4 style={{color: '#2196F3', marginBottom: '8px'}}>Market Size</h4>
                         <p style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41'}}>{analysis.demand_analysis?.market_size}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
-                        <h4 style={{color: '#F44336', marginBottom: '8px'}}>🎯 Competition</h4>
+                        <h4 style={{color: '#F44336', marginBottom: '8px'}}>Competition</h4>
                         <p style={{fontSize: '16px', color: '#ccc'}}>{analysis.demand_analysis?.competition}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '8px'}}>📈 Market Score</h4>
+                        <h4 style={{color: '#4CAF50', marginBottom: '8px'}}>Market Score</h4>
                         <svg viewBox="0 0 100 100" style={{width: '100%', height: '80px', margin: '10px 0'}}>
                           <circle cx="50" cy="50" r="45" fill="none" stroke="#333" strokeWidth="8" opacity="0.2"/>
                           <circle
@@ -1027,28 +1024,26 @@ function App() {
 
                     <div className="grid-2">
                       <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                          <span>✨</span>
+                        <h4 style={{color: '#4CAF50', marginBottom: '16px'}}>
                           Key Opportunities
                         </h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
                           {analysis.demand_analysis?.opportunities?.map((o: string, i: number) => (
                             <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
-                              ✓ {o}
+                              {o}
                             </li>
                           ))}
                         </ul>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
-                        <h4 style={{color: '#FF9800', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                          <span>⚡</span>
+                        <h4 style={{color: '#FF9800', marginBottom: '16px'}}>
                           Key Threats
                         </h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
                           {analysis.demand_analysis?.threats?.map((t: string, i: number) => (
                             <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '6px', borderLeft: '3px solid #FF9800', color: '#ccc', fontSize: '13'}}>
-                              ⚠️ {t}
+                              {t}
                             </li>
                           ))}
                         </ul>
@@ -1062,7 +1057,7 @@ function App() {
                     <p><strong>Regulators:</strong> {analysis.regulatory_analysis?.key_regulators?.join(', ')}</p>
                     <p><strong>Timeline:</strong> ~{analysis.regulatory_analysis?.estimated_timeline} days</p>
                     <p><strong>Cost:</strong> ৳{analysis.regulatory_analysis?.cost_estimate?.toLocaleString()}</p>
-                    <div className="warning">⚠️ {analysis.regulatory_analysis?.warnings}</div>
+                    <div className="warning">{analysis.regulatory_analysis?.warnings}</div>
                   </div>
                 )}
 
@@ -1210,7 +1205,7 @@ function App() {
 
                 {activeTab === 'competitors' && (
                   <div className="section">
-                    <h3>🔥 Competitive Landscape Analysis</h3>
+                    <h3>Competitive Landscape Analysis</h3>
 
                     {!analysis.competitor_analysis ? (
                       <div style={{padding: '30px', textAlign: 'center', background: 'rgba(33, 150, 243, 0.05)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
@@ -1243,7 +1238,7 @@ function App() {
                     {/* Direct Competitors */}
                     {Array.isArray(analysis.competitor_analysis?.direct_competitors) && analysis.competitor_analysis.direct_competitors.length > 0 && (
                       <>
-                        <h4 style={{marginBottom: '20px', color: '#fff'}}>📊 Direct Competitors</h4>
+                        <h4 style={{marginBottom: '20px', color: '#fff'}}>Direct Competitors</h4>
                         <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)'}}>
                           {analysis.competitor_analysis.direct_competitors.map((c: any, i: number) => (
                             <div key={i} style={{marginBottom: '20px'}}>
@@ -1252,7 +1247,7 @@ function App() {
                                   <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', width: '24px'}}>#{i + 1}</span>
                                   <div>
                                     <p style={{fontSize: '14px', fontWeight: 'bold', color: '#fff', margin: 0}}>{c.name || `Competitor ${i + 1}`}</p>
-                                    <p style={{fontSize: '11px', color: '#999', margin: '2px 0'}}>{c.market_share || '—'}% market share</p>
+                                    <p style={{fontSize: '11px', color: '#999', margin: '2px 0'}}>{c.market_share != null ? `${String(c.market_share).replace(/%+$/, '')}% market share` : 'Market share not available'}</p>
                                   </div>
                                 </div>
                               </div>
@@ -1260,10 +1255,10 @@ function App() {
                               {/* Competitor Info */}
                               <div style={{padding: '12px', background: 'rgba(0, 255, 65, 0.05)', borderRadius: '6px', fontSize: '12px', color: '#ccc'}}>
                                 <div style={{marginBottom: '8px'}}>
-                                  <strong style={{color: '#00ff41'}}>💪 Strength:</strong> {c.strength || 'Strong market presence'}
+                                  <strong style={{color: '#00ff41'}}>Strength:</strong> {c.strength || 'Strong market presence'}
                                 </div>
                                 <div>
-                                  <strong style={{color: '#FF9800'}}>⚠️ Weakness:</strong> {c.weakness || 'Limited regional coverage'}
+                                  <strong style={{color: '#FF9800'}}>Weakness:</strong> {c.weakness || 'Limited regional coverage'}
                                 </div>
                               </div>
 
@@ -1279,7 +1274,7 @@ function App() {
                     {/* Competitive Advantage */}
                     {analysis.competitor_analysis?.competitive_advantage && (
                       <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '2px solid #00ff41'}}>
-                        <h4 style={{color: '#00ff41', marginBottom: '12px'}}>💡 Your Competitive Advantage</h4>
+                        <h4 style={{color: '#00ff41', marginBottom: '12px'}}>Your Competitive Advantage</h4>
                         <p style={{color: '#ccc', fontSize: '14px', lineHeight: '1.6', margin: 0}}>
                           {typeof analysis.competitor_analysis.competitive_advantage === 'string'
                             ? analysis.competitor_analysis.competitive_advantage
@@ -1291,11 +1286,11 @@ function App() {
                     {/* Market Gaps */}
                     {Array.isArray(analysis.competitor_analysis?.market_gaps) && analysis.competitor_analysis.market_gaps.length > 0 && (
                       <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>✨ Market Gaps & Opportunities</h4>
+                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>Market Gaps & Opportunities</h4>
                         <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
                           {analysis.competitor_analysis.market_gaps.map((gap: string, i: number) => (
                             <li key={i} style={{padding: '10px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
-                              ✓ {gap}
+                              {gap}
                             </li>
                           ))}
                         </ul>
@@ -1306,7 +1301,6 @@ function App() {
                     {analysis.competitor_analysis?.threat_level && (
                       <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '2px solid #FF9800'}}>
                         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                          <div style={{fontSize: '24px'}}>⚠️</div>
                           <div>
                             <p style={{fontSize: '12px', color: '#999', margin: '0 0 4px 0', textTransform: 'uppercase'}}>Threat Level</p>
                             <p style={{fontSize: '18px', fontWeight: 'bold', color: '#FF9800', margin: 0}}>
@@ -1326,7 +1320,7 @@ function App() {
                 )}
                 {activeTab === 'bangladesh' && hasData(analysis.bangladesh_impact) && (
                   <div className="section">
-                    <h3>🇧🇩 Bangladesh Market Impact Assessment</h3>
+                    <h3>Bangladesh Market Impact Assessment</h3>
 
                     <div style={{marginBottom: '30px', padding: '30px', background: 'linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(0, 255, 65, 0.1))', borderRadius: '12px', border: '2px solid #2196F3'}}>
                       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -1334,47 +1328,44 @@ function App() {
                           <p style={{color: '#999', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase'}}>Market Impact Score</p>
                           <p style={{fontSize: '40px', fontWeight: 'bold', color: '#00ff41'}}>{analysis.bangladesh_impact?.impact_score}/10</p>
                         </div>
-                        <div style={{fontSize: '64px'}}>🇧🇩</div>
                       </div>
                     </div>
 
                     <div className="grid-2" style={{marginBottom: '30px'}}>
                       <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
-                        <h4 style={{color: '#F44336', marginBottom: '14px'}}>⚖️ Local Regulations</h4>
+                        <h4 style={{color: '#F44336', marginBottom: '14px'}}>Local Regulations</h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
                           {asList(analysis.bangladesh_impact?.local_regulations).map((r: any, i: number) => (
                             <li key={i} style={{padding: '8px 0', borderBottom: '1px solid rgba(244, 67, 54, 0.2)', color: '#ccc', fontSize: '13'}}>
-                              ✓ {asText(r)}
+                              {asText(r)}
                             </li>
                           ))}
                         </ul>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>💰 Market Potential</h4>
+                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>Market Potential</h4>
                         <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.market_potential)}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
-                        <h4 style={{color: '#9C27B0', marginBottom: '14px'}}>🎭 Cultural Factors</h4>
+                        <h4 style={{color: '#9C27B0', marginBottom: '14px'}}>Cultural Factors</h4>
                         <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.cultural_factors)}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
-                        <h4 style={{color: '#FF9800', marginBottom: '14px'}}>📊 Economic Factors</h4>
+                        <h4 style={{color: '#FF9800', marginBottom: '14px'}}>Economic Factors</h4>
                         <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.economic_factors)}</p>
                       </div>
                     </div>
 
                     <div style={{padding: '24px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '12px', border: '2px solid #00ff41'}}>
-                      <h4 style={{color: '#00ff41', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px'}}>
-                        <span>✨</span>
+                      <h4 style={{color: '#00ff41', marginBottom: '16px'}}>
                         Localization Strategy for Bangladesh
                       </h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px'}}>
                         {asList(analysis.bangladesh_impact?.localization_recommendations).map((r: any, i: number) => (
-                          <div key={i} style={{padding: '14px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '1px solid #00ff41', display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
-                            <span style={{color: '#00ff41', fontWeight: 'bold', fontSize: '16px', marginTop: '2px'}}>✓</span>
+                          <div key={i} style={{padding: '14px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '1px solid #00ff41'}}>
                             <span style={{color: '#ccc', fontSize: '13', lineHeight: '1.5'}}>{asText(r)}</span>
                           </div>
                         ))}
@@ -1397,10 +1388,10 @@ function App() {
                       <rect x="400" y="290" width="390" height="300" fill="rgba(244, 67, 54, 0.08)" stroke="#F44336" strokeWidth="2" rx="6"/>
 
                       {/* Headers */}
-                      <text x="205" y="40" textAnchor="middle" fill="#4CAF50" fontSize="18" fontWeight="bold">💪 STRENGTHS</text>
-                      <text x="595" y="40" textAnchor="middle" fill="#FF9800" fontSize="18" fontWeight="bold">⚠️ WEAKNESSES</text>
-                      <text x="205" y="320" textAnchor="middle" fill="#2196F3" fontSize="18" fontWeight="bold">🎯 OPPORTUNITIES</text>
-                      <text x="595" y="320" textAnchor="middle" fill="#F44336" fontSize="18" fontWeight="bold">🔥 THREATS</text>
+                      <text x="205" y="40" textAnchor="middle" fill="#4CAF50" fontSize="18" fontWeight="bold">STRENGTHS</text>
+                      <text x="595" y="40" textAnchor="middle" fill="#FF9800" fontSize="18" fontWeight="bold">WEAKNESSES</text>
+                      <text x="205" y="320" textAnchor="middle" fill="#2196F3" fontSize="18" fontWeight="bold">OPPORTUNITIES</text>
+                      <text x="595" y="320" textAnchor="middle" fill="#F44336" fontSize="18" fontWeight="bold">THREATS</text>
 
                       {/* Strengths content */}
                       {asList(analysis.swot_analysis?.strengths).slice(0, 3).map((s: any, i: number) => (
@@ -1463,13 +1454,13 @@ function App() {
 
                     <div className="grid-2" style={{marginTop: '40px'}}>
                       <div>
-                        <h4>📊 Customer Acquisition Channels</h4>
+                        <h4>Customer Acquisition Channels</h4>
                         <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
                           {asText(analysis.go_to_market?.customer_acquisition)}
                         </p>
                       </div>
                       <div>
-                        <h4>💰 Pricing Strategy</h4>
+                        <h4>Pricing Strategy</h4>
                         <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
                           {asText(analysis.go_to_market?.pricing_strategy)}
                         </p>
@@ -1477,11 +1468,10 @@ function App() {
                     </div>
 
                     <div style={{marginTop: '30px', padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
-                      <h4 style={{color: '#9C27B0', marginBottom: '16px'}}>🤝 Key Partnership Targets</h4>
+                      <h4 style={{color: '#9C27B0', marginBottom: '16px'}}>Key Partnership Targets</h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
                         {asList(analysis.go_to_market?.partnership_targets).map((p: any, i: number) => (
-                          <div key={i} style={{padding: '12px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '6px', border: '1px solid rgba(156, 39, 176, 0.2)', display: 'flex', alignItems: 'center', gap: '10px'}}>
-                            <span style={{fontSize: '18px'}}>🤝</span>
+                          <div key={i} style={{padding: '12px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '6px', border: '1px solid rgba(156, 39, 176, 0.2)'}}>
                             <span style={{color: '#ccc', fontSize: '13'}}>{asText(p)}</span>
                           </div>
                         ))}
@@ -1503,7 +1493,6 @@ function App() {
                           <p style={{color: '#999', fontSize: '12px', marginBottom: '4px'}}>Overall Risk Score</p>
                           <p style={{fontSize: '32px', fontWeight: 'bold', color: '#FF9800'}}>{analysis.risk_assessment?.overall_risk_score}/10</p>
                         </div>
-                        <div style={{fontSize: '48px'}}>📊</div>
                       </div>
                     </div>
 
@@ -1536,7 +1525,7 @@ function App() {
                       <text x="250" y="80" fontSize="11" fill="#4CAF50" fontWeight="bold" textAnchor="middle">Low Priority</text>
                       <text x="600" y="80" fontSize="11" fill="#FF9800" fontWeight="bold" textAnchor="middle">Medium Priority</text>
                       <text x="250" y="370" fontSize="11" fill="#FF9800" fontWeight="bold" textAnchor="middle">Medium Priority</text>
-                      <text x="600" y="370" fontSize="11" fill="#F44336" fontWeight="bold" textAnchor="middle">🔴 Critical</text>
+                      <text x="600" y="370" fontSize="11" fill="#F44336" fontWeight="bold" textAnchor="middle">Critical</text>
 
                       {/* Risk bubbles */}
                       {analysis.risk_assessment?.high_risks?.map((_: any, i: number) => (
@@ -1555,28 +1544,28 @@ function App() {
 
                     <div className="grid-2" style={{marginTop: '30px'}}>
                       <div>
-                        <h4>🔴 High Priority Risks</h4>
+                        <h4>High Priority Risks</h4>
                         {analysis.risk_assessment?.high_risks?.map((r: any, i: number) => (
                           <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(244, 67, 54, 0.12)', borderRadius: '6px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
                               <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#F44336', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 1}</span>
                               <strong style={{color: '#F44336'}}>{r.risk}</strong>
                             </div>
-                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>📊 {r.probability} probability | 💥 {r.impact}</p>
-                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>✓ Mitigation: {r.mitigation}</p>
+                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>{r.probability} probability | {r.impact}</p>
+                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
                           </div>
                         ))}
                       </div>
                       <div>
-                        <h4>🟡 Medium Priority Risks</h4>
+                        <h4>Medium Priority Risks</h4>
                         {analysis.risk_assessment?.medium_risks?.map((r: any, i: number) => (
                           <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(255, 152, 0, 0.12)', borderRadius: '6px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
                               <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#FF9800', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 4}</span>
                               <strong style={{color: '#FF9800'}}>{r.risk}</strong>
                             </div>
-                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>📊 {r.probability} probability | 💥 {r.impact}</p>
-                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>✓ Mitigation: {r.mitigation}</p>
+                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>{r.probability} probability | {r.impact}</p>
+                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
                           </div>
                         ))}
                       </div>
@@ -1619,7 +1608,7 @@ function App() {
                         {asList(analysis.founder_fit?.required_skills).map((s: any, i: number) => (
                           <div key={i} style={{marginBottom: '12px'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px'}}>
-                              <span style={{fontSize: '13px', color: '#ccc'}}>📌 {asText(s)}</span>
+                              <span style={{fontSize: '13px', color: '#ccc'}}>{asText(s)}</span>
                             </div>
                             <div style={{height: '6px', background: 'rgba(22, 25, 47, 0.9)', borderRadius: '3px', overflow: 'hidden', border: '1px solid var(--border)'}}>
                               <div style={{height: '100%', background: 'linear-gradient(90deg, #00ff41, #00ffee)', width: `${50 + i * 15}%`, transition: 'width 0.3s'}}></div>
@@ -1631,22 +1620,21 @@ function App() {
 
                     <div className="grid-2">
                       <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
-                        <h4 style={{color: '#FF9800', marginBottom: '12px'}}>⚠️ Experience Gaps</h4>
+                        <h4 style={{color: '#FF9800', marginBottom: '12px'}}>Experience Gaps</h4>
                         <p style={{color: '#ccc', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.experience_gaps)}</p>
                       </div>
 
                       <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '12px'}}>👥 Team Recommendations</h4>
+                        <h4 style={{color: '#4CAF50', marginBottom: '12px'}}>Team Recommendations</h4>
                         <p style={{color: '#ccc', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.team_recommendations)}</p>
                       </div>
                     </div>
 
                     <div style={{marginTop: '30px', padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
-                      <h4 style={{color: '#2196F3', marginBottom: '16px'}}>📚 How to Improve Your Fit</h4>
+                      <h4 style={{color: '#2196F3', marginBottom: '16px'}}>How to Improve Your Fit</h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px'}}>
                         {asList(analysis.founder_fit?.improvement_areas).map((a: any, i: number) => (
-                          <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.2)', display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
-                            <span style={{fontSize: '18px', marginTop: '2px'}}>📚</span>
+                          <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.2)'}}>
                             <span style={{color: '#ccc', fontSize: '13'}}>{asText(a)}</span>
                           </div>
                         ))}
@@ -1719,7 +1707,7 @@ function App() {
                   <div className="qa-section">
                     <p>Practice pitching to investors with AI-powered Q&A</p>
                     {analysis.overall_readiness_score >= 5 ? (
-                      <button onClick={startQA} className="btn-primary btn-large">🎤 Start Interview</button>
+                      <button onClick={startQA} className="btn-primary btn-large">Start Interview</button>
                     ) : (
                       <p className="warning">Improve readiness score to 5+ for Q&A</p>
                     )}

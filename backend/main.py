@@ -43,20 +43,20 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# CORS Configuration
+# CORS: locked to the actual frontend origin only (from .env), plus its
+# 127.0.0.1 spelling since browsers treat the two as different origins.
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
+    FRONTEND_URL,
+    FRONTEND_URL.replace("localhost", "127.0.0.1"),
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # Include collaboration routes
@@ -117,16 +117,16 @@ async def root():
     """Health check endpoint"""
     return {
         "status": "operational",
-        "message": "FounderCheck API is running ✓"
+        "message": "FounderCheck API is running"
     }
 
 @app.get("/health", response_model=HealthCheck)
 async def health_check():
     """Health check with API key status"""
-    anthropic_key = "✓" if os.getenv("ANTHROPIC_API_KEY") else "✗"
+    anthropic_key = "configured" if os.getenv("ANTHROPIC_API_KEY") else "missing"
     return {
         "status": "operational",
-        "message": f"API Keys: Anthropic={anthropic_key}"
+        "message": f"API keys: Anthropic {anthropic_key}"
     }
 
 @app.post("/api/v1/hello", response_model=HelloResponse)

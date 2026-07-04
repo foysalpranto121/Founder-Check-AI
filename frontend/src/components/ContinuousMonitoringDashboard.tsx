@@ -20,9 +20,9 @@ const ContinuousMonitoringDashboard = () => {
         paddingBottom: '1rem'
       }}>
         {[
-          { key: 'milestones', label: '🎯 Milestones' },
-          { key: 'alerts', label: '🔔 Live Alerts' },
-          { key: 'insights', label: '📊 Daily Insights' }
+          { key: 'milestones', label: 'Milestones' },
+          { key: 'alerts', label: 'Live Alerts' },
+          { key: 'insights', label: 'Daily Insights' }
         ].map(tab => (
           <button
             key={tab.key}
@@ -43,7 +43,7 @@ const ContinuousMonitoringDashboard = () => {
 
       {activeTab === 'milestones' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>🎯 Milestone Tracking</h3>
+          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Milestone Tracking</h3>
 
           <div style={{
             display: 'grid',
@@ -52,11 +52,11 @@ const ContinuousMonitoringDashboard = () => {
             marginBottom: '2rem'
           }}>
             {[
-              { label: 'Total', value: '5', icon: '📋' },
-              { label: 'Completed', value: '1', icon: '✅' },
-              { label: 'In Progress', value: '2', icon: '⚙️' },
-              { label: 'Delayed', value: '0', icon: '⚠️' },
-              { label: 'Overall', value: '44%', icon: '📈' }
+              { label: 'Total', value: '5', icon: '' },
+              { label: 'Completed', value: '1', icon: '' },
+              { label: 'In Progress', value: '2', icon: '' },
+              { label: 'Delayed', value: '0', icon: '' },
+              { label: 'Overall', value: '44%', icon: '' }
             ].map((stat, i) => (
               <div key={i} style={{
                 backgroundColor: 'rgba(0, 0, 0, 0.3)',
@@ -82,7 +82,7 @@ const ContinuousMonitoringDashboard = () => {
               <h4 style={{ margin: 0, color: '#00ff41' }}>Upcoming Milestones</h4>
             </div>
             {[
-              { name: 'First 1000 Users', date: 'Jun 30, 2024', progress: 60, status: '⚙️' },
+              { name: 'First 1000 Users', date: 'Jun 30, 2024', progress: 60, status: '' },
               { name: 'Series A Fundraising', date: 'Sep 30, 2024', progress: 0, status: '⏳' },
               { name: 'Market Expansion', date: 'Aug 31, 2024', progress: 0, status: '⏳' }
             ].map((m, i) => (
@@ -121,7 +121,7 @@ const ContinuousMonitoringDashboard = () => {
 
       {activeTab === 'alerts' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>🔔 Live Alerts & News</h3>
+          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Live Alerts & News</h3>
 
           <div style={{
             display: 'grid',
@@ -130,10 +130,10 @@ const ContinuousMonitoringDashboard = () => {
             marginBottom: '2rem'
           }}>
             {[
-              { icon: '🔴', label: 'Critical', count: '2', color: '#ff5555' },
-              { icon: '🟠', label: 'High', count: '5', color: '#ffaa00' },
-              { icon: '🟡', label: 'Medium', count: '8', color: '#ffff00' },
-              { icon: '🟢', label: 'Low', count: '3', color: '#00ff41' }
+              { icon: '', label: 'Critical', count: '2', color: '#ff5555' },
+              { icon: '', label: 'High', count: '5', color: '#ffaa00' },
+              { icon: '', label: 'Medium', count: '8', color: '#ffff00' },
+              { icon: '', label: 'Low', count: '3', color: '#00ff41' }
             ].map((priority, i) => (
               <div key={i} style={{
                 backgroundColor: 'rgba(0, 0, 0, 0.3)',
@@ -159,9 +159,9 @@ const ContinuousMonitoringDashboard = () => {
               <h4 style={{ margin: 0, color: '#00ff41' }}>Recent Alerts</h4>
             </div>
             {[
-              { type: '📊', title: 'Competitor Alert: GrowthX acquired StrategyBD', time: '2 hours ago', priority: 'high' },
-              { type: '💰', title: 'Funding News: Series B rounds up 40% in region', time: '4 hours ago', priority: 'medium' },
-              { type: '📈', title: 'Market Trend: EdTech adoption accelerating', time: '1 day ago', priority: 'medium' }
+              { type: '', title: 'Competitor Alert: GrowthX acquired StrategyBD', time: '2 hours ago', priority: 'high' },
+              { type: '', title: 'Funding News: Series B rounds up 40% in region', time: '4 hours ago', priority: 'medium' },
+              { type: '', title: 'Market Trend: EdTech adoption accelerating', time: '1 day ago', priority: 'medium' }
             ].map((alert, i) => (
               <div key={i} style={{
                 padding: '1rem',
@@ -222,7 +222,7 @@ const ContinuousMonitoringDashboard = () => {
 
       {activeTab === 'insights' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>📊 Daily Insights</h3>
+          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Daily Insights</h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
             <div style={{
@@ -230,7 +230,7 @@ const ContinuousMonitoringDashboard = () => {
               padding: '1.5rem',
               borderRadius: '8px'
             }}>
-              <h4 style={{ color: '#00ffee', marginTop: 0 }}>📈 Market Insights</h4>
+              <h4 style={{ color: '#00ffee', marginTop: 0 }}>Market Insights</h4>
               <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#aaa', lineHeight: '1.8', fontSize: '0.9rem' }}>
                 <li>EdTech market growing 35% YoY</li>
                 <li>Regulatory uncertainty in FinTech</li>
@@ -243,11 +243,11 @@ const ContinuousMonitoringDashboard = () => {
               padding: '1.5rem',
               borderRadius: '8px'
             }}>
-              <h4 style={{ color: '#00ffee', marginTop: 0 }}>🎯 Opportunities</h4>
+              <h4 style={{ color: '#00ffee', marginTop: 0 }}>Opportunities</h4>
               <div style={{ color: '#aaa', lineHeight: '1.8', fontSize: '0.9rem' }}>
-                <div>✓ High-growth sectors (EdTech, HealthTech)</div>
-                <div>✓ Government incentives for tech startups</div>
-                <div>✓ Rising venture capital activity</div>
+                <div>High-growth sectors (EdTech, HealthTech)</div>
+                <div>Government incentives for tech startups</div>
+                <div>Rising venture capital activity</div>
               </div>
             </div>
 
@@ -256,7 +256,7 @@ const ContinuousMonitoringDashboard = () => {
               padding: '1.5rem',
               borderRadius: '8px'
             }}>
-              <h4 style={{ color: '#00ffee', marginTop: 0 }}>💼 Competitor Moves</h4>
+              <h4 style={{ color: '#00ffee', marginTop: 0 }}>Competitor Moves</h4>
               <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#aaa', lineHeight: '1.8', fontSize: '0.9rem' }}>
                 <li>Competitor A launched AI feature</li>
                 <li>Competitor B raised Series B ($5M)</li>
@@ -269,7 +269,7 @@ const ContinuousMonitoringDashboard = () => {
               padding: '1.5rem',
               borderRadius: '8px'
             }}>
-              <h4 style={{ color: '#00ffee', marginTop: 0 }}>💰 Funding Updates</h4>
+              <h4 style={{ color: '#00ffee', marginTop: 0 }}>Funding Updates</h4>
               <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#aaa', lineHeight: '1.8', fontSize: '0.9rem' }}>
                 <li>TechBD raised $5M Series A</li>
                 <li>StartupX raised $2M Seed Round</li>
@@ -284,11 +284,11 @@ const ContinuousMonitoringDashboard = () => {
             padding: '1.5rem',
             borderRadius: '8px'
           }}>
-            <h4 style={{ color: '#00ff41', margin: '0 0 1rem 0' }}>🔄 Pivot Detection Analysis</h4>
+            <h4 style={{ color: '#00ff41', margin: '0 0 1rem 0' }}>Pivot Detection Analysis</h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
               <div>
                 <div style={{ color: '#aaa', marginBottom: '0.5rem' }}>Status</div>
-                <div style={{ color: '#00ff41', fontWeight: 'bold', fontSize: '1.1rem' }}>✓ On Track</div>
+                <div style={{ color: '#00ff41', fontWeight: 'bold', fontSize: '1.1rem' }}>On Track</div>
                 <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>Confidence: 78%</div>
               </div>
               <div>

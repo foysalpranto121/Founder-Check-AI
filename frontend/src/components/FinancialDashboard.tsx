@@ -66,7 +66,7 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ color: '#fff', marginBottom: '30px' }}>💰 Financial Projections & Analysis</h2>
+      <h2 style={{ color: '#fff', marginBottom: '30px' }}>Financial Projections & Analysis</h2>
 
       {/* Key Metrics Overview */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '30px' }}>
@@ -98,11 +98,11 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px', flexWrap: 'wrap' }}>
         {[
-          { id: 'overview' as const, label: '📊 Overview' },
-          { id: 'pnl' as const, label: '📈 P&L Statement' },
-          { id: 'cashflow' as const, label: '💵 Cash Flow' },
-          { id: 'uniteconomics' as const, label: '📌 Unit Economics' },
-          { id: 'sensitivity' as const, label: '⚡ Sensitivity' }
+          { id: 'overview' as const, label: 'Overview' },
+          { id: 'pnl' as const, label: 'P&L Statement' },
+          { id: 'cashflow' as const, label: 'Cash Flow' },
+          { id: 'uniteconomics' as const, label: 'Unit Economics' },
+          { id: 'sensitivity' as const, label: 'Sensitivity' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -190,7 +190,7 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
             <div style={{ padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
               <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>Profitability Timeline</p>
               <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#4CAF50' }}>{financial.key_metrics.month_to_profitability}</p>
-              <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>✓ Strong trajectory</p>
+              <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>Strong trajectory</p>
             </div>
           </div>
         </div>
@@ -346,7 +346,7 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
                 }}
               >
                 <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  {scenario.scenario === 'Conservative' ? '⬇ Conservative' : scenario.scenario === 'Base' ? '➡️ Base Case' : '⬆️ Optimistic'}
+                  {scenario.scenario === 'Conservative' ? '⬇ Conservative' : scenario.scenario === 'Base' ? 'Base Case' : '⬆Optimistic'}
                 </p>
                 <p style={{ fontSize: '14px', fontWeight: '600', color: '#ccc', marginBottom: '4px' }}>Growth: {scenario.growth_rate_pct}%/month</p>
                 <p style={{ fontSize: '20px', fontWeight: 'bold', color: scenario.scenario === 'Conservative' ? '#FF9800' : scenario.scenario === 'Base' ? '#4CAF50' : '#00ff41' }}>
@@ -360,7 +360,7 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
           </div>
 
           <div style={{ padding: '20px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '2px solid #00ff41' }}>
-            <h4 style={{ color: '#00ff41', marginBottom: '12px' }}>📊 What This Means</h4>
+            <h4 style={{ color: '#00ff41', marginBottom: '12px' }}>What This Means</h4>
             <ul style={{ color: '#ccc', fontSize: '13px', lineHeight: '1.8', margin: 0, paddingLeft: '20px' }}>
               <li>Scenario planning helps understand key drivers</li>
               <li>Conservative: 1% monthly growth (low acquisition)</li>

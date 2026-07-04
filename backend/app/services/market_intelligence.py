@@ -372,11 +372,11 @@ class MarketIntelligenceService:
     def _get_benchmark_recommendation(self, metric: str, percentile: str) -> str:
         """Get recommendation based on benchmark"""
         if percentile in ['Top 10%', 'Top 25%']:
-            return f'✓ {metric} is strong. Maintain current strategy.'
+            return f'{metric} is strong. Maintain current strategy.'
         elif percentile == 'Above Median':
             return f'{metric} is competitive. Small improvements could help.'
         else:
-            return f'⚠ {metric} is below industry average. Priority improvement area.'
+            return f'{metric} is below industry average. Priority improvement area.'
 
     def get_all_benchmarks_for_sector(self, sector: str) -> Dict:
         """Get all benchmarks for sector"""

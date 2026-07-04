@@ -105,31 +105,31 @@ class PlatformIntegrationsService:
             'slack': {
                 'name': 'Slack',
                 'description': 'Get startup milestone alerts in Slack',
-                'icon': '💬',
+                'icon': '',
                 'features': ['Milestone notifications', 'Daily digests', 'Team mentions']
             },
             'google_drive': {
                 'name': 'Google Drive',
                 'description': 'Export reports and analysis to Google Drive',
-                'icon': '📁',
+                'icon': '',
                 'features': ['Auto-export PDFs', 'Shared folders', 'Version history']
             },
             'notion': {
                 'name': 'Notion',
                 'description': 'Sync analysis data with Notion workspace',
-                'icon': '📝',
+                'icon': '',
                 'features': ['Database sync', 'Timeline view', 'Team collaboration']
             },
             'zapier': {
                 'name': 'Zapier',
                 'description': 'Connect to 5000+ apps via Zapier',
-                'icon': '⚡',
+                'icon': '',
                 'features': ['Custom workflows', 'Multi-app automation', 'No-code setup']
             },
             'gmail': {
                 'name': 'Gmail',
                 'description': 'Share reports via Gmail with tracking',
-                'icon': '📧',
+                'icon': '',
                 'features': ['Email sharing', 'Read receipts', 'Scheduled sends']
             }
         }
@@ -201,26 +201,26 @@ class PlatformIntegrationsService:
         if integration.platform == 'slack':
             return {
                 'success': True,
-                'message': '✓ Slack connection successful',
+                'message': 'Slack connection successful',
                 'workspace': 'FounderCheck Workspace',
                 'channel': '#founders'
             }
         elif integration.platform == 'google_drive':
             return {
                 'success': True,
-                'message': '✓ Google Drive authenticated',
+                'message': 'Google Drive authenticated',
                 'folder': 'FounderCheck Reports',
                 'shared_count': 5
             }
         elif integration.platform == 'notion':
             return {
                 'success': True,
-                'message': '✓ Notion database synced',
+                'message': 'Notion database synced',
                 'database': 'Startup Analysis',
                 'records': 12
             }
         else:
-            return {'success': True, 'message': f'✓ {integration.platform} connected'}
+            return {'success': True, 'message': f'{integration.platform} connected'}
 
     # ========== CALENDAR & REMINDERS ==========
 

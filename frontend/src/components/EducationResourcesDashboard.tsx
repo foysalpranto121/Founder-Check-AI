@@ -97,7 +97,7 @@ const EducationResourcesDashboard = () => {
   const renderModulesTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>📚 Learning Modules</h3>
+        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Learning Modules</h3>
         <button
           onClick={() => {
             loadModules();
@@ -203,7 +203,7 @@ const EducationResourcesDashboard = () => {
   const renderArticlesTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>📰 Articles & Case Studies</h3>
+        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Articles & Case Studies</h3>
         <button
           onClick={() => {
             loadArticles();
@@ -286,7 +286,7 @@ const EducationResourcesDashboard = () => {
                     fontSize: '0.8rem',
                     fontWeight: 'bold'
                   }}>
-                    ⭐ Featured
+                    Featured
                   </span>
                 )}
               </div>
@@ -300,7 +300,7 @@ const EducationResourcesDashboard = () => {
   const renderGlossaryTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>📖 Glossary</h3>
+        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Glossary</h3>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <input
             type="text"
@@ -373,7 +373,7 @@ const EducationResourcesDashboard = () => {
 
   const renderFAQsTab = () => (
     <div style={{ padding: '2rem' }}>
-      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>❓ Frequently Asked Questions</h3>
+      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Frequently Asked Questions</h3>
       <button
         onClick={loadFAQs}
         style={{
@@ -409,12 +409,12 @@ const EducationResourcesDashboard = () => {
                   fontSize: '0.8rem',
                   fontWeight: 'bold'
                 }}>
-                  📹 Video
+                  Video
                 </span>
               )}
             </div>
             <p style={{ color: '#aaa', margin: '0.5rem 0', lineHeight: '1.5' }}>
-              ✓ {faq.helpful_count} people found this helpful
+              {faq.helpful_count} people found this helpful
             </p>
           </div>
         ))}
@@ -424,7 +424,7 @@ const EducationResourcesDashboard = () => {
 
   const renderHelpTab = () => (
     <div style={{ padding: '2rem' }}>
-      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>🆘 Help & Support</h3>
+      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Help & Support</h3>
 
       <div style={{
         backgroundColor: 'rgba(0, 255, 238, 0.1)',
@@ -446,7 +446,7 @@ const EducationResourcesDashboard = () => {
               textAlign: 'left'
             }}
           >
-            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>📊 Financial Dashboard</div>
+            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Financial Dashboard</div>
             <small style={{ color: '#aaa' }}>Revenue projections & unit economics</small>
           </button>
           <button
@@ -460,7 +460,7 @@ const EducationResourcesDashboard = () => {
               textAlign: 'left'
             }}
           >
-            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>🌍 Market Intel</div>
+            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Market Intel</div>
             <small style={{ color: '#aaa' }}>Market data & competitor analysis</small>
           </button>
           <button
@@ -474,7 +474,7 @@ const EducationResourcesDashboard = () => {
               textAlign: 'left'
             }}
           >
-            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>🎯 Product Validation</div>
+            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Product Validation</div>
             <small style={{ color: '#aaa' }}>Feature prioritization & MVP planning</small>
           </button>
           <button
@@ -488,7 +488,7 @@ const EducationResourcesDashboard = () => {
               textAlign: 'left'
             }}
           >
-            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>🔌 Integrations</div>
+            <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Integrations</div>
             <small style={{ color: '#aaa' }}>Connect Slack, Notion, and more</small>
           </button>
         </div>
@@ -526,11 +526,11 @@ const EducationResourcesDashboard = () => {
         borderBottom: '1px solid #00ffee'
       }}>
         {[
-          { key: 'modules', label: '📚 Modules', icon: '📚' },
-          { key: 'articles', label: '📰 Articles', icon: '📰' },
-          { key: 'glossary', label: '📖 Glossary', icon: '📖' },
-          { key: 'faqs', label: '❓ FAQs', icon: '❓' },
-          { key: 'help', label: '🆘 Help', icon: '🆘' }
+          { key: 'modules', label: 'Modules', icon: '' },
+          { key: 'articles', label: 'Articles', icon: '' },
+          { key: 'glossary', label: 'Glossary', icon: '' },
+          { key: 'faqs', label: 'FAQs', icon: '' },
+          { key: 'help', label: 'Help', icon: '' }
         ].map(tab => (
           <button
             key={tab.key}

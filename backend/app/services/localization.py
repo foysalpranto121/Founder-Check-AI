@@ -198,10 +198,10 @@ class LocalizationService:
     def get_supported_regions(self) -> List[Dict]:
         """Get supported regions"""
         return [
-            {'code': 'bd', 'name': 'Bangladesh', 'flag': '🇧🇩', 'status': 'active'},
-            {'code': 'in', 'name': 'India', 'flag': '🇮🇳', 'status': 'active'},
-            {'code': 'pk', 'name': 'Pakistan', 'flag': '🇵🇰', 'status': 'active'},
-            {'code': 'sea', 'name': 'Southeast Asia', 'flag': '🌏', 'status': 'active'}
+            {'code': 'bd', 'name': 'Bangladesh', 'flag': '', 'status': 'active'},
+            {'code': 'in', 'name': 'India', 'flag': '', 'status': 'active'},
+            {'code': 'pk', 'name': 'Pakistan', 'flag': '', 'status': 'active'},
+            {'code': 'sea', 'name': 'Southeast Asia', 'flag': '', 'status': 'active'}
         ]
 
     def get_localization_config(self, language: str, region: str) -> Dict:

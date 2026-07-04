@@ -73,9 +73,9 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
 
   // Helper to get status text
   const getStatusText = (score: number) => {
-    if (score >= 8) return '✓ STRONG';
-    if (score >= 6) return '⚠ MODERATE';
-    return '✗ NEEDS WORK';
+    if (score >= 8) return 'STRONG';
+    if (score >= 6) return 'MODERATE';
+    return 'NEEDS WORK';
   };
 
   // Generate bar chart for market share
@@ -111,25 +111,25 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
     return `
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
         <div style="padding: 15px; background: rgba(0, 255, 65, 0.08); border-left: 3px solid #00ff41; border-radius: 6px;">
-          <h5 style="color: #00ff41; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">💪 STRENGTHS (${swot.strengths?.length || 0})</h5>
+          <h5 style="color: #00ff41; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">STRENGTHS (${swot.strengths?.length || 0})</h5>
           ${(swot.strengths || []).map((s: string) => `
             <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span> ${s}
+              <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;"></span> ${s}
             </p>
           `).join('')}
         </div>
 
         <div style="padding: 15px; background: rgba(255, 170, 0, 0.08); border-left: 3px solid #ffaa00; border-radius: 6px;">
-          <h5 style="color: #ffaa00; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">⚠️ WEAKNESSES (${swot.weaknesses?.length || 0})</h5>
+          <h5 style="color: #ffaa00; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">WEAKNESSES (${swot.weaknesses?.length || 0})</h5>
           ${(swot.weaknesses || []).map((w: string) => `
             <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #ffaa00; font-weight: bold;">⚠</span> ${w}
+              <span style="position: absolute; left: 0; color: #ffaa00; font-weight: bold;"></span> ${w}
             </p>
           `).join('')}
         </div>
 
         <div style="padding: 15px; background: rgba(33, 150, 243, 0.08); border-left: 3px solid #2196f3; border-radius: 6px;">
-          <h5 style="color: #2196f3; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">🎯 OPPORTUNITIES (${swot.opportunities?.length || 0})</h5>
+          <h5 style="color: #2196f3; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">OPPORTUNITIES (${swot.opportunities?.length || 0})</h5>
           ${(swot.opportunities || []).map((o: string) => `
             <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
               <span style="position: absolute; left: 0; color: #2196f3; font-weight: bold;">→</span> ${o}
@@ -138,10 +138,10 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
         </div>
 
         <div style="padding: 15px; background: rgba(244, 67, 54, 0.08); border-left: 3px solid #f44336; border-radius: 6px;">
-          <h5 style="color: #f44336; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">🔥 THREATS (${swot.threats?.length || 0})</h5>
+          <h5 style="color: #f44336; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">THREATS (${swot.threats?.length || 0})</h5>
           ${(swot.threats || []).map((t: string) => `
             <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #f44336; font-weight: bold;">⚡</span> ${t}
+              <span style="position: absolute; left: 0; color: #f44336; font-weight: bold;"></span> ${t}
             </p>
           `).join('')}
         </div>
@@ -160,7 +160,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
       return `
         <div style="margin-bottom: 10px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-            <span style="font-size: 11px; font-weight: 600; color: #333;">📌 ${skill}</span>
+            <span style="font-size: 11px; font-weight: 600; color: #333;">${skill}</span>
             <span style="font-size: 10px; color: #999;">${prof}%</span>
           </div>
           <div style="height: 5px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
@@ -275,7 +275,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
       <!-- COVER PAGE -->
       <div class="page cover-page">
         <div style="text-align: center;">
-          <div class="logo-text">🚀 FounderCheck</div>
+          <div class="logo-text">FounderCheck</div>
           <div class="subtitle-cover">Analysis Report</div>
         </div>
 
@@ -297,7 +297,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 2: EXECUTIVE DASHBOARD -->
       <div class="page content-page">
-        <h1 class="page-title">📊 Executive Dashboard</h1>
+        <h1 class="page-title">Executive Dashboard</h1>
 
         <div class="kpi-grid">
           <div class="kpi-card">
@@ -341,7 +341,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
               <td style="padding: 10px;">Market Size</td>
               <td style="padding: 10px; font-weight: 600;">${analysis.demand_analysis?.market_size || 'N/A'}</td>
               <td style="padding: 10px; color: ${marketScore >= 7 ? '#00ff41' : marketScore >= 5 ? '#ffaa00' : '#ff4444'};">
-                ${marketScore >= 7 ? '✓ Strong' : marketScore >= 5 ? '⚠ Moderate' : '✗ Limited'}
+                ${marketScore >= 7 ? 'Strong' : marketScore >= 5 ? 'Moderate' : 'Limited'}
               </td>
             </tr>
             <tr style="border-bottom: 1px solid #e0e0e0; background: #f9f9f9;">
@@ -353,7 +353,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
               <td style="padding: 10px;">Regulatory Risk</td>
               <td style="padding: 10px; font-weight: 600; color: ${getScoreColor(riskScore)};">${riskScore.toFixed(1)}/10</td>
               <td style="padding: 10px; color: ${riskScore >= 7 ? '#ff4444' : riskScore >= 5 ? '#ffaa00' : '#00ff41'};">
-                ${riskScore >= 7 ? '⚠ High Risk' : riskScore >= 5 ? '⚠ Moderate' : '✓ Low Risk'}
+                ${riskScore >= 7 ? 'High Risk' : riskScore >= 5 ? 'Moderate' : 'Low Risk'}
               </td>
             </tr>
           </tbody>
@@ -363,7 +363,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
           ${(analysis.demand_analysis?.opportunities || []).slice(0, 4).map((opp: string) => `
             <div style="padding: 10px; background: rgba(0, 255, 65, 0.08); border-left: 3px solid #00ff41; border-radius: 4px; font-size: 11px; color: #333;">
-              <span style="color: #00ff41; font-weight: bold;">✓</span> ${opp}
+              <span style="color: #00ff41; font-weight: bold;"></span> ${opp}
             </div>
           `).join('')}
         </div>
@@ -371,7 +371,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 3: COMPETITIVE ANALYSIS -->
       <div class="page content-page">
-        <h1 class="page-title">🔥 Competitive Landscape</h1>
+        <h1 class="page-title">Competitive Landscape</h1>
 
         <h3 class="section-title">Market Share Distribution</h3>
         <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -397,13 +397,13 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 4: SWOT ANALYSIS -->
       <div class="page content-page">
-        <h1 class="page-title">🎯 SWOT Analysis</h1>
+        <h1 class="page-title">SWOT Analysis</h1>
         ${generateSWOTDetails()}
       </div>
 
       <!-- PAGE 5: RISKS & FOUNDER FIT -->
       <div class="page content-page">
-        <h1 class="page-title">⚠️ Risk & Founder Fit</h1>
+        <h1 class="page-title">Risk & Founder Fit</h1>
 
         <h3 class="section-title">Risk Assessment</h3>
         <div style="display: flex; gap: 15px; margin-bottom: 20px;">
@@ -419,9 +419,9 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
 
         ${(analysis.risk_assessment?.high_risks || []).slice(0, 2).map((r: any) => `
           <div style="padding: 12px; background: rgba(244, 67, 54, 0.1); border-left: 3px solid #f44336; border-radius: 6px; margin-bottom: 10px; font-size: 11px;">
-            <p style="font-weight: 700; color: #f44336; margin-bottom: 4px;">⚠ ${r.risk}</p>
-            <p style="color: #666; margin-bottom: 3px;">📊 ${r.probability} | 💥 ${r.impact}</p>
-            <p style="color: #00ff41;">✓ ${r.mitigation}</p>
+            <p style="font-weight: 700; color: #f44336; margin-bottom: 4px;">${r.risk}</p>
+            <p style="color: #666; margin-bottom: 3px;">${r.probability} | ${r.impact}</p>
+            <p style="color: #00ff41;">${r.mitigation}</p>
           </div>
         `).join('')}
 
@@ -440,7 +440,7 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 6: BANGLADESH & GTM -->
       <div class="page content-page">
-        <h1 class="page-title">🇧🇩 Bangladesh Impact & GTM</h1>
+        <h1 class="page-title">Bangladesh Impact & GTM</h1>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
           <div style="padding: 15px; background: rgba(33, 150, 243, 0.08); border-left: 3px solid #2196f3; border-radius: 8px;">
@@ -461,15 +461,15 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
         <h3 class="section-title">Go-to-Market Roadmap</h3>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
           <div style="padding: 12px; background: rgba(0, 255, 65, 0.08); border-left: 3px solid #00ff41; border-radius: 6px;">
-            <p style="font-size: 11px; font-weight: 700; color: #00ff41; margin-bottom: 6px;">🚀 Phase 1: Launch</p>
+            <p style="font-size: 11px; font-weight: 700; color: #00ff41; margin-bottom: 6px;">Phase 1: Launch</p>
             <p style="font-size: 10px; color: #666; line-height: 1.5;">${analysis.go_to_market?.phase_1?.substring(0, 60) || 'Plan launch strategy'}</p>
           </div>
           <div style="padding: 12px; background: rgba(255, 170, 0, 0.08); border-left: 3px solid #ffaa00; border-radius: 6px;">
-            <p style="font-size: 11px; font-weight: 700; color: #ffaa00; margin-bottom: 6px;">📈 Phase 2: Growth</p>
+            <p style="font-size: 11px; font-weight: 700; color: #ffaa00; margin-bottom: 6px;">Phase 2: Growth</p>
             <p style="font-size: 10px; color: #666; line-height: 1.5;">${analysis.go_to_market?.phase_2?.substring(0, 60) || 'Scale operations'}</p>
           </div>
           <div style="padding: 12px; background: rgba(76, 175, 80, 0.08); border-left: 3px solid #4caf50; border-radius: 6px;">
-            <p style="font-size: 11px; font-weight: 700; color: #4caf50; margin-bottom: 6px;">🎯 Phase 3: Scale</p>
+            <p style="font-size: 11px; font-weight: 700; color: #4caf50; margin-bottom: 6px;">Phase 3: Scale</p>
             <p style="font-size: 10px; color: #666; line-height: 1.5;">${analysis.go_to_market?.phase_3?.substring(0, 60) || 'Expand market'}</p>
           </div>
         </div>

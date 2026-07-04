@@ -63,7 +63,6 @@ body {
 
 .landing-logo svg {
   color: var(--accent);
-  filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.8));
 }
 
 .landing-nav-links {
@@ -129,7 +128,6 @@ body {
   line-height: 1.1;
   margin-bottom: 20px;
   color: var(--text);
-  text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
 }
 
 .hero-subtitle {
@@ -160,7 +158,6 @@ body {
   font-size: 36px;
   font-weight: 900;
   color: var(--accent);
-  text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
 }
 
 .stat-label {
@@ -195,7 +192,7 @@ body {
 
 .hero-cta {
   padding: 14px 36px;
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  background: var(--accent);
   color: var(--bg);
   border: 2px solid var(--accent);
   border-radius: 10px;
@@ -204,19 +201,18 @@ body {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
 }
 
 .hero-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 40px rgba(0, 255, 65, 0.9);
+  background: var(--cyan);
+  border-color: var(--cyan);
 }
 
 /* SECTIONS */
 .how-it-works {
   width: 100%;
   padding: 80px 40px;
-  background: linear-gradient(180deg, rgba(10, 13, 32, 0.8), rgba(22, 25, 47, 0.8));
+  background: rgba(16, 19, 40, 0.8);
   border-top: 1px solid var(--border);
 }
 
@@ -245,8 +241,6 @@ body {
 
 .how-step:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-  transform: translateY(-4px);
 }
 
 .step-number {
@@ -307,8 +301,6 @@ body {
 
 .feature-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-  transform: translateY(-4px);
 }
 
 .feature-icon {
@@ -362,7 +354,7 @@ body {
 .login-section {
   width: 100%;
   padding: 80px 40px;
-  background: linear-gradient(180deg, rgba(10, 13, 32, 0.8), rgba(22, 25, 47, 0.8));
+  background: rgba(16, 19, 40, 0.8);
 }
 
 .login-wrapper {
@@ -422,7 +414,7 @@ body {
 .form-submit {
   width: 100%;
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  background: var(--accent);
   color: var(--bg);
   border: 2px solid var(--accent);
   border-radius: 8px;
@@ -434,7 +426,8 @@ body {
 }
 
 .form-submit:hover {
-  transform: translateY(-2px);
+  background: var(--cyan);
+  border-color: var(--cyan);
 }
 
 .form-hint {
@@ -488,7 +481,6 @@ body {
 
 .logo svg {
   color: var(--accent);
-  filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.8));
 }
 
 .nav {
@@ -516,7 +508,7 @@ body {
 
 .nav-item.active {
   color: var(--bg);
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  background: var(--accent);
 }
 
 .header-right {
@@ -603,12 +595,28 @@ body {
 .textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(0, 255, 65, 0.2);
+}
+
+.qa-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(10, 13, 32, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.qa-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .btn-primary {
   padding: 10px 20px;
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  background: var(--accent);
   color: var(--bg);
   border: 2px solid var(--accent);
   border-radius: 8px;
@@ -619,7 +627,8 @@ body {
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
+  background: var(--cyan);
+  border-color: var(--cyan);
 }
 
 .btn-large {
@@ -673,14 +682,10 @@ body {
 
 .pricing-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-  transform: translateY(-4px);
 }
 
 .pricing-card.featured {
   border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
-  transform: scale(1.02);
 }
 
 .pricing-badge {
@@ -728,7 +733,7 @@ body {
 }
 
 .pricing-features li:before {
-  content: '✓';
+  content: '-';
   position: absolute;
   left: 0;
   color: var(--accent);
@@ -737,7 +742,7 @@ body {
 
 .pricing-btn {
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  background: var(--accent);
   color: var(--bg);
   border: 2px solid var(--accent);
   border-radius: 8px;
@@ -745,18 +750,18 @@ body {
   font-size: 13px;
   cursor: pointer;
   text-transform: uppercase;
-  transition: all 0.3s;
 }
 
 .pricing-btn:hover {
-  transform: translateY(-2px);
+  background: var(--cyan);
+  border-color: var(--cyan);
 }
 
 /* HIGHLIGHTS SECTION */
 .highlights {
   width: 100%;
   padding: 60px 40px;
-  background: linear-gradient(180deg, rgba(10, 13, 32, 0.8), rgba(22, 25, 47, 0.8));
+  background: rgba(16, 19, 40, 0.8);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
@@ -819,8 +824,6 @@ body {
 
 .module:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-  transform: translateY(-4px);
 }
 
 .module h3 {
@@ -904,8 +907,6 @@ body {
 
 .gtm-phase:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 15px rgba(0, 255, 65, 0.15);
-  transform: translateY(-2px);
 }
 
 .gtm-phase h4 {
@@ -1096,20 +1097,22 @@ body {
   margin-bottom: 0;
 }
 
+/* The readiness score is the focal point of the results page: larger
+   than any sibling element, accent border, generous whitespace. */
 .score-card-main {
   display: flex;
-  gap: 30px;
+  gap: 36px;
   align-items: center;
-  padding: 30px;
+  padding: 36px;
   background: rgba(22, 25, 47, 0.7);
-  border: 1px solid var(--border);
+  border: 2px solid var(--accent);
   border-radius: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
 }
 
 .score-circle {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1117,23 +1120,49 @@ body {
   flex-shrink: 0;
 }
 
+.score-circle-inner {
+  width: 122px;
+  height: 122px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .score-num {
-  font-size: 36px;
+  font-size: 44px;
   font-weight: 900;
   color: var(--text);
+  line-height: 1;
+}
+
+.score-denom {
+  font-size: 13px;
+  color: #b0b8d4;
+  margin-top: 4px;
 }
 
 .score-info h3 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
 }
 
-.score-info p {
+.score-verdict {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.score-factors {
   font-size: 13px;
   color: #b0b8d4;
   margin-bottom: 16px;
+  max-width: 480px;
 }
 
 .action-buttons {
@@ -1236,7 +1265,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  background: var(--accent);
   transition: width 0.3s ease;
 }
 

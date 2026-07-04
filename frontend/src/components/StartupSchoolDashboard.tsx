@@ -78,7 +78,7 @@ const StartupSchoolDashboard = () => {
   const renderAcademyTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>🎓 Founder Academy</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Founder Academy</h3>
         <button
           onClick={loadCourses}
           style={{
@@ -145,7 +145,7 @@ const StartupSchoolDashboard = () => {
   const renderCommunityTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>💬 Peer Community</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Peer Community</h3>
         <button
           onClick={loadThreads}
           style={{
@@ -186,9 +186,9 @@ const StartupSchoolDashboard = () => {
               Posted by {thread.author}
             </div>
             <div style={{ display: 'flex', gap: '1.5rem', color: '#aaa', fontSize: '0.8rem' }}>
-              <span>👁️ {thread.views} views</span>
-              <span>💬 {thread.replies} replies</span>
-              <span>👍 {thread.votes} votes</span>
+              <span>{thread.views} views</span>
+              <span>{thread.replies} replies</span>
+              <span>{thread.votes} votes</span>
             </div>
           </div>
         ))}
@@ -199,7 +199,7 @@ const StartupSchoolDashboard = () => {
   const renderMentorshipTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>🤝 Mentorship Program</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Mentorship Program</h3>
         <button
           onClick={loadMentors}
           style={{
@@ -234,7 +234,7 @@ const StartupSchoolDashboard = () => {
                 fontSize: '0.8rem',
                 fontWeight: 'bold'
               }}>
-                ⭐ {mentor.rating}
+                {mentor.rating}
               </div>
             </div>
             <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
@@ -289,9 +289,9 @@ const StartupSchoolDashboard = () => {
         borderBottom: '1px solid #00ffee'
       }}>
         {[
-          { key: 'academy', label: '🎓 Academy', icon: '🎓' },
-          { key: 'community', label: '💬 Community', icon: '💬' },
-          { key: 'mentorship', label: '🤝 Mentors', icon: '🤝' }
+          { key: 'academy', label: 'Academy', icon: '' },
+          { key: 'community', label: 'Community', icon: '' },
+          { key: 'mentorship', label: 'Mentors', icon: '' }
         ].map(tab => (
           <button
             key={tab.key}

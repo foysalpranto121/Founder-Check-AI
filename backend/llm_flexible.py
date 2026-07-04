@@ -313,6 +313,19 @@ def call_llm(prompt: str, max_tokens: int = 1000) -> str:
     raise LLMUnavailableError("All LLM providers failed - " + " | ".join(failures))
 
 
+def sanitize_for_prompt(value, max_length: int = 2000) -> str:
+    """Neutralize untrusted text before prompt interpolation (rule 12).
+
+    Strips non-printable characters, collapses whitespace, and caps
+    length. Applied to every user-origin field that reaches a prompt.
+    """
+    if not isinstance(value, str):
+        value = str(value if value is not None else "")
+    cleaned = "".join(ch for ch in value if ch.isprintable() or ch in "\n\t ")
+    cleaned = " ".join(cleaned.split())
+    return cleaned[:max_length]
+
+
 def _parse_json(response: str):
     """Parse an LLM response as JSON, tolerating markdown code fences.
 
@@ -338,6 +351,8 @@ def extract_idea_fields(idea_text: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["idea_extraction"]
 
+    idea_text = sanitize_for_prompt(idea_text)
+
     prompt = f"""
     Analyze this startup idea and extract structured information.
 
@@ -361,6 +376,9 @@ def analyze_demand(idea_text: str, target_customer: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["demand_analysis"]
 
+    idea_text = sanitize_for_prompt(idea_text)
+    target_customer = sanitize_for_prompt(target_customer, 200)
+
     prompt = f"""
     Analyze market demand for this idea:
     {idea_text}
@@ -376,6 +394,9 @@ def analyze_demand(idea_text: str, target_customer: str) -> dict:
 def analyze_regulatory_risks(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["regulatory_analysis"]
+
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
 
     prompt = f"""
     Analyze regulatory risks for a {sector} startup in Bangladesh.
@@ -394,6 +415,9 @@ def generate_business_canvas(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["business_canvas"]
 
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
+
     prompt = f"""
     Create a Business Model Canvas for this startup:
     {idea_text} ({sector})
@@ -410,6 +434,9 @@ def generate_investor_questions(idea_text: str, sector: str) -> list:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["investor_questions"]
 
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
+
     prompt = f"""
     Generate 10 tough investor questions for this startup:
     {idea_text} ({sector})
@@ -424,6 +451,9 @@ def generate_investor_questions(idea_text: str, sector: str) -> list:
 def analyze_competitors(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["competitor_analysis"]
+
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
 
     prompt = f"""
     Analyze competitors for this Bangladesh startup:
@@ -440,6 +470,9 @@ def analyze_competitors(idea_text: str, sector: str) -> dict:
 def analyze_bangladesh_impact(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["bangladesh_impact"]
+
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
 
     prompt = f"""
     Analyze Bangladesh-specific impact and localization for this startup:
@@ -463,6 +496,9 @@ def analyze_swot(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["swot_analysis"]
 
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
+
     prompt = f"""
     Generate comprehensive SWOT analysis for this startup:
     {idea_text} ({sector})
@@ -478,6 +514,9 @@ def analyze_swot(idea_text: str, sector: str) -> dict:
 def generate_gtm_strategy(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["go_to_market"]
+
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
 
     prompt = f"""
     Create a Go-to-Market strategy for this Bangladesh startup:
@@ -502,6 +541,9 @@ def assess_risks(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["risk_assessment"]
 
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
+
     prompt = f"""
     Assess critical risks for this Bangladesh startup:
     {idea_text} ({sector})
@@ -516,6 +558,9 @@ def assess_risks(idea_text: str, sector: str) -> dict:
 def assess_founder_fit(idea_text: str, sector: str) -> dict:
     if PROVIDER == "demo":
         return DEMO_RESPONSES["founder_fit"]
+
+    idea_text = sanitize_for_prompt(idea_text)
+    sector = sanitize_for_prompt(sector, 100)
 
     prompt = f"""
     Assess founder fit for this startup idea:
@@ -539,11 +584,11 @@ def score_investor_answer(question: str, answer: str, idea: str) -> dict:
     if PROVIDER == "demo":
         return {"score": 5.0, "feedback": "Demo mode: canned evaluation, not a real assessment."}
 
-    # User-submitted text is untrusted (rule 12): strip and cap it before
-    # it reaches the prompt.
-    answer_text = " ".join((answer or "").split())[:1500]
-    question_text = " ".join((question or "").split())[:500]
-    idea_text = " ".join((idea or "").split())[:500]
+    # User-submitted text is untrusted (rule 12): sanitize before it
+    # reaches the prompt.
+    answer_text = sanitize_for_prompt(answer, 1500)
+    question_text = sanitize_for_prompt(question, 500)
+    idea_text = sanitize_for_prompt(idea, 500)
 
     prompt = f"""
     You are a startup investor evaluating one answer in a pitch Q&A.

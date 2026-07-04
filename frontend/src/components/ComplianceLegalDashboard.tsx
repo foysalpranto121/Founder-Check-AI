@@ -53,7 +53,7 @@ const ComplianceLegalDashboard = () => {
   const renderChecklistTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>📋 Regulatory Checklist</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Regulatory Checklist</h3>
         <button onClick={loadChecklist} style={{
           padding: '0.75rem 1.5rem',
           backgroundColor: '#00ff41',
@@ -110,7 +110,7 @@ const ComplianceLegalDashboard = () => {
   const renderDocumentsTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>📄 Legal Documents</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Legal Documents</h3>
         <button onClick={loadTemplates} style={{
           padding: '0.75rem 1.5rem',
           backgroundColor: '#00ff41',
@@ -171,7 +171,7 @@ const ComplianceLegalDashboard = () => {
 
   const renderIPTab = () => (
     <div style={{ padding: '2rem' }}>
-      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>🔐 IP Protection Guide</h3>
+      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>IP Protection Guide</h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
         {['Trademark Registration', 'Patent Filing', 'Copyright Protection', 'NDA Templates'].map((guide, i) => (
@@ -216,9 +216,9 @@ const ComplianceLegalDashboard = () => {
         borderBottom: '1px solid #00ffee'
       }}>
         {[
-          { key: 'checklist', label: '📋 Checklist' },
-          { key: 'documents', label: '📄 Documents' },
-          { key: 'ip', label: '🔐 IP Protection' }
+          { key: 'checklist', label: 'Checklist' },
+          { key: 'documents', label: 'Documents' },
+          { key: 'ip', label: 'IP Protection' }
         ].map(tab => (
           <button
             key={tab.key}

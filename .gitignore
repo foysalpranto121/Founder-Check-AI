@@ -29,6 +29,7 @@ frontend/.vite/
 # Data
 data/chroma_db/
 data/*.db
+backend/*.db
 
 # Logs
 *.log

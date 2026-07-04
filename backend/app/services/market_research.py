@@ -338,9 +338,9 @@ class MarketResearchService:
             return insights
 
         # Placeholder insights
-        insights.append('✓ Survey responses collected successfully')
-        insights.append(f'✓ Average completion time: {sum(r.time_spent_seconds for r in responses) / len(responses) / 60:.1f} minutes')
-        insights.append('✓ Consider follow-up interviews for deeper insights')
+        insights.append('Survey responses collected successfully')
+        insights.append(f'Average completion time: {sum(r.time_spent_seconds for r in responses) / len(responses) / 60:.1f} minutes')
+        insights.append('Consider follow-up interviews for deeper insights')
 
         return insights
 
@@ -458,11 +458,11 @@ class MarketResearchService:
     def _get_trend_recommendation(self, score: float, direction: str) -> str:
         """Get trend recommendation"""
         if direction == 'up' and score > 80:
-            return '✓ Strong upward trend - Good timing for entry'
+            return 'Strong upward trend - Good timing for entry'
         elif direction == 'up':
-            return '✓ Growing trend - Consider market opportunity'
+            return 'Growing trend - Consider market opportunity'
         elif direction == 'down':
-            return '⚠ Declining trend - Validate market demand'
+            return 'Declining trend - Validate market demand'
         else:
             return '→ Stable trend - Market maturity'
 

@@ -317,11 +317,11 @@ def test_api():
                 {"role": "user", "content": "Say 'FounderCheck API is working!' in JSON format."}
             ]
         )
-        print("✓ Claude API is working!")
+        print("Claude API is working!")
         print(message.content[0].text)
         return True
     except Exception as e:
-        print(f"✗ Claude API error: {e}")
+        print(f"Claude API error: {e}")
         return False
 
 

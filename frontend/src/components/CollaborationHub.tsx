@@ -89,16 +89,16 @@ const CollaborationHub: React.FC<Props> = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ color: '#fff', marginBottom: '24px' }}>🤝 Collaboration & Networking</h2>
+      <h2 style={{ color: '#fff', marginBottom: '24px' }}>Collaboration & Networking</h2>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexWrap: 'wrap' }}>
         {[
-          { id: 'team' as Tab, label: '👥 Team Workspace' },
-          { id: 'advisors' as Tab, label: '🎓 Advisor Network' },
-          { id: 'investors' as Tab, label: '💼 Investor Connect' },
-          { id: 'comments' as Tab, label: '💬 Comments' },
-          { id: 'activity' as Tab, label: '📊 Activity' }
+          { id: 'team' as Tab, label: 'Team Workspace' },
+          { id: 'advisors' as Tab, label: 'Advisor Network' },
+          { id: 'investors' as Tab, label: 'Investor Connect' },
+          { id: 'comments' as Tab, label: 'Comments' },
+          { id: 'activity' as Tab, label: 'Activity' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -126,7 +126,7 @@ const CollaborationHub: React.FC<Props> = () => {
 
           {/* Invite */}
           <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-            <h4 style={{ color: '#2196F3', marginBottom: '12px', fontSize: '14px' }}>📧 Invite Team Member</h4>
+            <h4 style={{ color: '#2196F3', marginBottom: '12px', fontSize: '14px' }}>Invite Team Member</h4>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="email"
@@ -196,7 +196,7 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Advisors Tab */}
       {activeTab === 'advisors' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>🎓 Find Expert Advisors</h3>
+          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Find Expert Advisors</h3>
           <p style={{ color: '#999', marginBottom: '20px', fontSize: '13px' }}>Connect with experienced mentors in your sector</p>
 
           <div style={{ display: 'grid', gap: '16px' }}>
@@ -205,10 +205,10 @@ const CollaborationHub: React.FC<Props> = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                   <div style={{ flex: 1 }}>
                     <h4 style={{ color: '#fff', marginBottom: '8px', fontSize: '15px', fontWeight: '600' }}>
-                      👤 {advisor.name}
+                      {advisor.name}
                     </h4>
                     <p style={{ color: '#999', fontSize: '12px', marginBottom: '12px' }}>
-                      ⭐ {advisor.rating} ({advisor.reviews} reviews)
+                      {advisor.rating} ({advisor.reviews} reviews)
                     </p>
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       {advisor.expertise.map((exp: string, j: number) => (
@@ -246,17 +246,17 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Investors Tab */}
       {activeTab === 'investors' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>💼 Investor Outreach</h3>
+          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Investor Outreach</h3>
 
           <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '2px solid #00ff41' }}>
-            <h4 style={{ color: '#00ff41', marginBottom: '12px', fontSize: '14px' }}>📤 Send to Investors</h4>
+            <h4 style={{ color: '#00ff41', marginBottom: '12px', fontSize: '14px' }}>Send to Investors</h4>
             <p style={{ color: '#ccc', fontSize: '12px', marginBottom: '12px' }}>Share your analysis with angel investors and VCs</p>
             <button style={{ padding: '10px 16px', background: '#00ff41', color: '#000', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}>
               Share with Investors
             </button>
           </div>
 
-          <h4 style={{ color: '#fff', marginBottom: '16px', fontSize: '14px' }}>📊 Outreach Status</h4>
+          <h4 style={{ color: '#fff', marginBottom: '16px', fontSize: '14px' }}>Outreach Status</h4>
           <div style={{ display: 'grid', gap: '12px' }}>
             {outreachStatus.map((item, i) => (
               <div key={i} style={{ padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -276,7 +276,7 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Comments Tab */}
       {activeTab === 'comments' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>💬 Team Discussion</h3>
+          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Team Discussion</h3>
 
           {/* New Comment */}
           <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
@@ -332,14 +332,14 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Activity Tab */}
       {activeTab === 'activity' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>📊 Team Activity</h3>
+          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Team Activity</h3>
 
           <div style={{ display: 'grid', gap: '12px' }}>
             {[
-              { time: '2 hours ago', action: 'John shared analysis with Sarah', icon: '📤' },
-              { time: '4 hours ago', action: 'Sarah commented on Market Analysis', icon: '💬' },
-              { time: '1 day ago', action: 'Team workspace created', icon: '👥' },
-              { time: '1 day ago', action: 'John added Sarah as team member', icon: '✅' }
+              { time: '2 hours ago', action: 'John shared analysis with Sarah', icon: '' },
+              { time: '4 hours ago', action: 'Sarah commented on Market Analysis', icon: '' },
+              { time: '1 day ago', action: 'Team workspace created', icon: '' },
+              { time: '1 day ago', action: 'John added Sarah as team member', icon: '' }
             ].map((activity, i) => (
               <div key={i} style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '12px' }}>
                 <span style={{ fontSize: '20px', minWidth: '24px', textAlign: 'center' }}>{activity.icon}</span>

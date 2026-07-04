@@ -20,9 +20,9 @@ const AdvancedAnalyticsDashboard = () => {
         paddingBottom: '1rem'
       }}>
         {[
-          { key: 'health', label: '💚 Health Score' },
-          { key: 'visuals', label: '📊 Visualizations' },
-          { key: 'reports', label: '📋 Reports' }
+          { key: 'health', label: 'Health Score' },
+          { key: 'visuals', label: 'Visualizations' },
+          { key: 'reports', label: 'Reports' }
         ].map(tab => (
           <button
             key={tab.key}
@@ -65,7 +65,7 @@ const AdvancedAnalyticsDashboard = () => {
             borderRadius: '8px',
             marginBottom: '1rem'
           }}>
-            <h4 style={{ color: '#00ff41', margin: '0 0 0.5rem 0' }}>🚀 Improvement Opportunities</h4>
+            <h4 style={{ color: '#00ff41', margin: '0 0 0.5rem 0' }}>Improvement Opportunities</h4>
             <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#aaa' }}>
               <li>Expand market reach and competitive positioning</li>
               <li>Strengthen team with key hires or advisors</li>
@@ -86,8 +86,8 @@ const AdvancedAnalyticsDashboard = () => {
             }}>
               <h4 style={{ color: '#00ffee', marginTop: 0 }}>Strength/Weakness Heatmap</h4>
               <div style={{ fontSize: '0.85rem', color: '#aaa', lineHeight: '1.8' }}>
-                <div>✓ Strengths: Financial Planning (85), Team (78), Product (72)</div>
-                <div>✗ Weaknesses: Market Reach (45), Brand (38), Differentiation (52)</div>
+                <div>Strengths: Financial Planning (85), Team (78), Product (72)</div>
+                <div>Weaknesses: Market Reach (45), Brand (38), Differentiation (52)</div>
               </div>
             </div>
 

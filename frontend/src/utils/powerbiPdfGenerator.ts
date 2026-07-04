@@ -120,9 +120,9 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
   `;
 
   const getStatusBadge = (score: number) => {
-    if (score >= 8) return { text: '✓ STRONG', color: '#00ff41' };
-    if (score >= 6) return { text: '⚠ MODERATE', color: '#ffaa00' };
-    return { text: '✗ NEEDS WORK', color: '#ff4444' };
+    if (score >= 8) return { text: 'STRONG', color: '#00ff41' };
+    if (score >= 6) return { text: 'MODERATE', color: '#ffaa00' };
+    return { text: 'NEEDS WORK', color: '#ff4444' };
   };
 
   const status = getStatusBadge(readinessScore);
@@ -540,7 +540,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
       <!-- COVER PAGE -->
       <div class="page cover-page">
         <div class="cover-header">
-          <div class="logo-text">🚀 FounderCheck</div>
+          <div class="logo-text">FounderCheck</div>
           <div class="subtitle-cover">Analysis Report</div>
         </div>
 
@@ -562,7 +562,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
       </div>
 
       <div class="page content-page">
-        <h1 class="page-title">📊 Executive Dashboard</h1>
+        <h1 class="page-title">Executive Dashboard</h1>
 
         <!-- KPI GRID -->
         <div class="kpi-grid">
@@ -606,7 +606,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 2: MARKET ANALYSIS -->
       <div class="page content-page">
-        <h1 class="page-title">📈 Market & Regulatory Analysis</h1>
+        <h1 class="page-title">Market & Regulatory Analysis</h1>
 
         <div class="metrics-section">
           <h3 class="section-title">Market Overview</h3>
@@ -622,7 +622,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
               <tr>
                 <td>Market Size</td>
                 <td style="font-weight: 600; color: #00ff41;">${analysis.demand_analysis?.market_size || 'N/A'}</td>
-                <td>${marketScore >= 7 ? '✓ Strong Opportunity' : marketScore >= 5 ? '⚠ Moderate' : '✗ Limited'}</td>
+                <td>${marketScore >= 7 ? 'Strong Opportunity' : marketScore >= 5 ? 'Moderate' : 'Limited'}</td>
               </tr>
               <tr>
                 <td>Sector</td>
@@ -639,7 +639,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
                 <td style="font-weight: 600; color: ${riskScore >= 7 ? '#ff4444' : riskScore >= 5 ? '#ffaa00' : '#00ff41'};">
                   ${riskScore.toFixed(1)}/10
                 </td>
-                <td>${riskScore >= 7 ? '⚠ High Risk' : riskScore >= 5 ? '⚠ Moderate' : '✓ Low Risk'}</td>
+                <td>${riskScore >= 7 ? 'High Risk' : riskScore >= 5 ? 'Moderate' : 'Low Risk'}</td>
               </tr>
             </tbody>
           </table>
@@ -651,7 +651,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
             <tbody>
               ${(analysis.demand_analysis?.opportunities || []).slice(0, 4).map((opp: string) => `
                 <tr>
-                  <td colspan="3"><span style="color: #00ff41; font-weight: 600;">✓</span> ${opp}</td>
+                  <td colspan="3"><span style="color: #00ff41; font-weight: 600;"></span> ${opp}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -664,7 +664,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
             <tbody>
               ${(analysis.demand_analysis?.threats || []).slice(0, 4).map((threat: string) => `
                 <tr>
-                  <td colspan="3"><span style="color: #ff4444; font-weight: 600;">⚠</span> ${threat}</td>
+                  <td colspan="3"><span style="color: #ff4444; font-weight: 600;"></span> ${threat}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -678,7 +678,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 3: COMPETITIVE ANALYSIS -->
       <div class="page content-page">
-        <h1 class="page-title">🔥 Competitive Landscape</h1>
+        <h1 class="page-title">Competitive Landscape</h1>
 
         <div class="metrics-section">
           <h3 class="section-title">Competitive Positioning</h3>
@@ -729,33 +729,33 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 4: SWOT & GTM -->
       <div class="page content-page">
-        <h1 class="page-title">🎯 SWOT & Go-to-Market Strategy</h1>
+        <h1 class="page-title">SWOT & Go-to-Market Strategy</h1>
 
         <h3 class="section-title" style="margin-top: 0;">SWOT Analysis</h3>
         <div class="swot-grid">
           <div class="swot-box strengths">
-            <h4 style="color: #00ff41;">💪 Strengths</h4>
+            <h4 style="color: #00ff41;">Strengths</h4>
             ${(analysis.swot_analysis?.strengths || []).map((s: string) => `
               <div class="swot-item">${s}</div>
             `).join('')}
           </div>
 
           <div class="swot-box weaknesses">
-            <h4 style="color: #ffaa00;">⚠️ Weaknesses</h4>
+            <h4 style="color: #ffaa00;">Weaknesses</h4>
             ${(analysis.swot_analysis?.weaknesses || []).map((w: string) => `
               <div class="swot-item">${w}</div>
             `).join('')}
           </div>
 
           <div class="swot-box opportunities">
-            <h4 style="color: #2196f3;">🎯 Opportunities</h4>
+            <h4 style="color: #2196f3;">Opportunities</h4>
             ${(analysis.swot_analysis?.opportunities || []).map((o: string) => `
               <div class="swot-item">${o}</div>
             `).join('')}
           </div>
 
           <div class="swot-box threats">
-            <h4 style="color: #ff4444;">🔥 Threats</h4>
+            <h4 style="color: #ff4444;">Threats</h4>
             ${(analysis.swot_analysis?.threats || []).map((t: string) => `
               <div class="swot-item">${t}</div>
             `).join('')}
@@ -766,19 +766,19 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
         <div class="timeline">
           <div class="timeline-phase">
             <div class="phase-number">1</div>
-            <div class="phase-title">🚀 Launch (30 Days)</div>
+            <div class="phase-title">Launch (30 Days)</div>
             <div class="phase-desc">${analysis.go_to_market?.phase_1 || 'N/A'}</div>
           </div>
 
           <div class="timeline-phase" style="border-left-color: #ffaa00;">
             <div class="phase-number" style="background: #ffaa00;">2</div>
-            <div class="phase-title">📈 Growth (60 Days)</div>
+            <div class="phase-title">Growth (60 Days)</div>
             <div class="phase-desc">${analysis.go_to_market?.phase_2 || 'N/A'}</div>
           </div>
 
           <div class="timeline-phase" style="border-left-color: #2196f3;">
             <div class="phase-number" style="background: #2196f3;">3</div>
-            <div class="phase-title">📊 Scale (90 Days)</div>
+            <div class="phase-title">Scale (90 Days)</div>
             <div class="phase-desc">${analysis.go_to_market?.phase_3 || 'N/A'}</div>
           </div>
         </div>
@@ -790,7 +790,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 5: RISKS & FOUNDER FIT -->
       <div class="page content-page">
-        <h1 class="page-title">⚠️ Risk Assessment & Team Fit</h1>
+        <h1 class="page-title">Risk Assessment & Team Fit</h1>
 
         <div class="metrics-section">
           <h3 class="section-title">Critical Risks</h3>
@@ -799,8 +799,8 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
             ${(analysis.risk_assessment?.high_risks || []).slice(0, 3).map((r: any) => `
               <div class="risk-item risk-high">
                 <div class="risk-name">${r.risk}</div>
-                <div class="risk-level" style="color: #ff4444;">📊 ${r.probability}</div>
-                <div class="risk-mitigation">✓ ${r.mitigation}</div>
+                <div class="risk-level" style="color: #ff4444;">${r.probability}</div>
+                <div class="risk-mitigation">${r.mitigation}</div>
               </div>
             `).join('')}
           </div>
@@ -817,7 +817,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
               <div>
                 <p style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Readiness</p>
                 <p style="font-size: 28px; font-weight: 900; color: #00ff41;">
-                  ${founderFitScore >= 7 ? '✓ Ready' : founderFitScore >= 5 ? '⚠ Developing' : '✗ Build Skills'}
+                  ${founderFitScore >= 7 ? 'Ready' : founderFitScore >= 5 ? 'Developing' : 'Build Skills'}
                 </p>
               </div>
             </div>
@@ -838,7 +838,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
 
       <!-- PAGE 6: BANGLADESH MARKET -->
       <div class="page content-page">
-        <h1 class="page-title">🇧🇩 Bangladesh Market Impact</h1>
+        <h1 class="page-title">Bangladesh Market Impact</h1>
 
         <div class="kpi-grid">
           <div class="kpi-card">
@@ -855,7 +855,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
 
           <div class="kpi-card">
             <div class="kpi-label">Market Ready</div>
-            <div class="kpi-value">${bangladeshScore >= 7 ? '✓' : '⚠'}</div>
+            <div class="kpi-value">${bangladeshScore >= 7 ? '' : ''}</div>
             <div class="kpi-subtext">Assessment</div>
           </div>
 
@@ -879,7 +879,7 @@ export const generatePowerBiPDF = (analysis: AnalysisData) => {
             <tbody>
               ${(analysis.bangladesh_impact?.localization_recommendations || []).map((rec: string) => `
                 <tr>
-                  <td style="padding: 10px 15px;"><span style="color: #00ff41; font-weight: 600;">✓</span> ${rec}</td>
+                  <td style="padding: 10px 15px;"><span style="color: #00ff41; font-weight: 600;"></span> ${rec}</td>
                 </tr>
               `).join('')}
             </tbody>

@@ -210,13 +210,13 @@ class AdvancedAnalyticsService:
         warnings = []
 
         if score.financial_health < 40:
-            warnings.append('⚠️ Low financial health - Runway may be tight')
+            warnings.append('Low financial health - Runway may be tight')
         if score.market_health < 40:
-            warnings.append('⚠️ Market challenges - Competition or growth slowdown')
+            warnings.append('Market challenges - Competition or growth slowdown')
         if score.team_health < 40:
-            warnings.append('⚠️ Team concerns - Key hires or experience gaps')
+            warnings.append('Team concerns - Key hires or experience gaps')
         if score.product_health < 40:
-            warnings.append('⚠️ Product issues - Retention or PMF concerns')
+            warnings.append('Product issues - Retention or PMF concerns')
 
         return warnings
 
@@ -225,13 +225,13 @@ class AdvancedAnalyticsService:
         improvements = []
 
         if score.financial_health < 70:
-            improvements.append('💰 Improve runway & burn rate management')
+            improvements.append('Improve runway & burn rate management')
         if score.market_health < 70:
-            improvements.append('📈 Expand market share & competitive positioning')
+            improvements.append('Expand market share & competitive positioning')
         if score.team_health < 70:
-            improvements.append('👥 Strengthen team with key hires or advisors')
+            improvements.append('Strengthen team with key hires or advisors')
         if score.product_health < 70:
-            improvements.append('🎯 Enhance product-market fit & user retention')
+            improvements.append('Enhance product-market fit & user retention')
 
         return improvements
 

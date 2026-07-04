@@ -20,9 +20,9 @@ const MobileOfflineDashboard = () => {
         paddingBottom: '1rem'
       }}>
         {[
-          { key: 'notifications', label: '🔔 Notifications' },
-          { key: 'offline', label: '📱 Offline Mode' },
-          { key: 'sync', label: '🔄 Sync Status' }
+          { key: 'notifications', label: 'Notifications' },
+          { key: 'offline', label: 'Offline Mode' },
+          { key: 'sync', label: 'Sync Status' }
         ].map(tab => (
           <button
             key={tab.key}
@@ -43,7 +43,7 @@ const MobileOfflineDashboard = () => {
 
       {activeTab === 'notifications' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>📬 Push Notifications</h3>
+          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Push Notifications</h3>
 
           <div style={{
             display: 'grid',
@@ -52,10 +52,10 @@ const MobileOfflineDashboard = () => {
             marginBottom: '2rem'
           }}>
             {[
-              { type: '🎯', label: 'Milestones', count: 3 },
-              { type: '📊', label: 'Alerts', count: 5 },
-              { type: '💰', label: 'Funding', count: 2 },
-              { type: '📈', label: 'Insights', count: 8 }
+              { type: '', label: 'Milestones', count: 3 },
+              { type: '', label: 'Alerts', count: 5 },
+              { type: '', label: 'Funding', count: 2 },
+              { type: '', label: 'Insights', count: 8 }
             ].map((item, i) => (
               <div key={i} style={{
                 backgroundColor: 'rgba(0, 0, 0, 0.3)',
@@ -81,9 +81,9 @@ const MobileOfflineDashboard = () => {
               <h4 style={{ margin: 0, color: '#00ff41' }}>Recent Notifications</h4>
             </div>
             {[
-              { icon: '🎯', title: 'Milestone Reached: Series A Funding', time: '2 hours ago' },
-              { icon: '📊', title: 'Competitor Alert: GrowthX launched new feature', time: '4 hours ago' },
-              { icon: '💰', title: 'Funding News: TechBD raised $5M Series A', time: '1 day ago' }
+              { icon: '', title: 'Milestone Reached: Series A Funding', time: '2 hours ago' },
+              { icon: '', title: 'Competitor Alert: GrowthX launched new feature', time: '4 hours ago' },
+              { icon: '', title: 'Funding News: TechBD raised $5M Series A', time: '1 day ago' }
             ].map((notif, i) => (
               <div key={i} style={{
                 padding: '1rem',
@@ -105,7 +105,7 @@ const MobileOfflineDashboard = () => {
 
       {activeTab === 'offline' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>📱 Offline Mode</h3>
+          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Offline Mode</h3>
 
           <div style={{
             backgroundColor: 'rgba(0, 255, 65, 0.1)',
@@ -116,7 +116,7 @@ const MobileOfflineDashboard = () => {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#00ff41' }}>✅ Offline Ready</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#00ff41' }}>Offline Ready</h4>
                 <p style={{ margin: 0, color: '#aaa', fontSize: '0.9rem' }}>
                   All analysis data downloaded and cached locally
                 </p>
@@ -173,12 +173,12 @@ const MobileOfflineDashboard = () => {
             padding: '1.5rem',
             borderRadius: '8px'
           }}>
-            <h4 style={{ color: '#00ffee', marginTop: 0 }}>📋 Offline Capabilities</h4>
+            <h4 style={{ color: '#00ffee', marginTop: 0 }}>Offline Capabilities</h4>
             <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#aaa' }}>
-              <li>✓ View all analysis data without internet</li>
-              <li>✓ Make local changes and notes</li>
-              <li>✓ Generate reports offline</li>
-              <li>✓ Access financial projections</li>
+              <li>View all analysis data without internet</li>
+              <li>Make local changes and notes</li>
+              <li>Generate reports offline</li>
+              <li>Access financial projections</li>
             </ul>
           </div>
         </div>
@@ -186,7 +186,7 @@ const MobileOfflineDashboard = () => {
 
       {activeTab === 'sync' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>🔄 Sync Status</h3>
+          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Sync Status</h3>
 
           <div style={{
             display: 'grid',
@@ -263,7 +263,7 @@ const MobileOfflineDashboard = () => {
             fontWeight: 'bold',
             fontSize: '1rem'
           }}>
-            🔄 Sync Now
+            Sync Now
           </button>
         </div>
       )}

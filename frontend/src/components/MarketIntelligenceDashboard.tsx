@@ -11,16 +11,16 @@ const MarketIntelligenceDashboard: React.FC<Props> = ({ sector = 'Technology' })
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ color: '#fff', marginBottom: '24px' }}>📊 Market Intelligence Dashboard</h2>
+      <h2 style={{ color: '#fff', marginBottom: '24px' }}>Market Intelligence Dashboard</h2>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexWrap: 'wrap' }}>
         {[
-          { id: 'market' as Tab, label: '🌍 Market Overview' },
-          { id: 'competitors' as Tab, label: '🏆 Competitive Analysis' },
-          { id: 'benchmarks' as Tab, label: '📈 Industry Benchmarks' },
-          { id: 'trends' as Tab, label: '📉 Trends & Alerts' },
-          { id: 'alerts' as Tab, label: '🔔 News Alerts' }
+          { id: 'market' as Tab, label: 'Market Overview' },
+          { id: 'competitors' as Tab, label: 'Competitive Analysis' },
+          { id: 'benchmarks' as Tab, label: 'Industry Benchmarks' },
+          { id: 'trends' as Tab, label: 'Trends & Alerts' },
+          { id: 'alerts' as Tab, label: 'News Alerts' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -85,7 +85,7 @@ const MarketIntelligenceDashboard: React.FC<Props> = ({ sector = 'Technology' })
             <div style={{ display: 'grid', gap: '8px' }}>
               {['Mobile-first adoption', 'FinTech growth', 'E-commerce expansion', 'Digital payments boom'].map((trend, i) => (
                 <div key={i} style={{ padding: '10px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '4px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>✓</span>
+                  <span style={{ color: '#4CAF50', fontWeight: 'bold' }}></span>
                   <span style={{ color: '#ccc', fontSize: '13px' }}>{trend}</span>
                 </div>
               ))}
@@ -102,9 +102,9 @@ const MarketIntelligenceDashboard: React.FC<Props> = ({ sector = 'Technology' })
           {/* Market Consolidation */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
             {[
-              { label: 'Competitors', value: '3', icon: '🏢' },
-              { label: 'Market Concentration', value: '85%', icon: '📊' },
-              { label: 'Status', value: 'Consolidated', icon: '🔒' }
+              { label: 'Competitors', value: '3', icon: '' },
+              { label: 'Market Concentration', value: '85%', icon: '' },
+              { label: 'Status', value: 'Consolidated', icon: '' }
             ].map((metric, i) => (
               <div key={i} style={{ padding: '16px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)', textAlign: 'center' }}>
                 <p style={{ fontSize: '24px', marginBottom: '8px' }}>{metric.icon}</p>
@@ -183,7 +183,7 @@ const MarketIntelligenceDashboard: React.FC<Props> = ({ sector = 'Technology' })
 
           {/* Recommendations */}
           <div style={{ marginTop: '24px', padding: '16px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)' }}>
-            <h4 style={{ color: '#FF9800', marginBottom: '12px', fontSize: '14px' }}>⚠️ Recommendations</h4>
+            <h4 style={{ color: '#FF9800', marginBottom: '12px', fontSize: '14px' }}>Recommendations</h4>
             <ul style={{ color: '#ccc', fontSize: '13px', lineHeight: '1.8', margin: 0, paddingLeft: '20px' }}>
               <li>CAC is slightly above benchmark - optimize marketing spend</li>
               <li>LTV is on track - maintain retention strategy</li>
@@ -266,7 +266,7 @@ const MarketIntelligenceDashboard: React.FC<Props> = ({ sector = 'Technology' })
 
           {/* Alert Settings */}
           <div style={{ marginTop: '24px', padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-            <h4 style={{ color: '#2196F3', marginBottom: '12px', fontSize: '14px' }}>🔔 Alert Preferences</h4>
+            <h4 style={{ color: '#2196F3', marginBottom: '12px', fontSize: '14px' }}>Alert Preferences</h4>
             <label style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', cursor: 'pointer' }}>
               <input type="checkbox" defaultChecked style={{ cursor: 'pointer' }} />
               <span style={{ color: '#ccc', fontSize: '13px' }}>High impact alerts</span>

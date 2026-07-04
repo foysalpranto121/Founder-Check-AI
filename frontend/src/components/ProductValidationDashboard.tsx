@@ -676,7 +676,7 @@ const ProductValidationDashboard = () => {
                   borderLeft: '2px solid #00ff41',
                   color: '#fff'
                 }}>
-                  ✓ {feature}
+                  {feature}
                 </div>
               ))}
             </div>
@@ -744,9 +744,9 @@ const ProductValidationDashboard = () => {
         borderBottom: '1px solid #00ffee'
       }}>
         {[
-          { key: 'priority', label: '📊 Feature Matrix', icon: '📊' },
-          { key: 'customer', label: '🎤 Customer Development', icon: '🎤' },
-          { key: 'mvp', label: '🚀 MVP Definition', icon: '🚀' }
+          { key: 'priority', label: 'Feature Matrix', icon: '' },
+          { key: 'customer', label: 'Customer Development', icon: '' },
+          { key: 'mvp', label: 'MVP Definition', icon: '' }
         ].map(tab => (
           <button
             key={tab.key}

@@ -342,17 +342,17 @@ class ProductValidationService:
         recommendations = []
 
         if len(insights) > 5:
-            recommendations.append('✓ Sufficient feedback collected - ready for product iteration')
+            recommendations.append('Sufficient feedback collected - ready for product iteration')
         else:
-            recommendations.append('⚠ Conduct more interviews for comprehensive feedback')
+            recommendations.append('Conduct more interviews for comprehensive feedback')
 
         if any('pain' in i.lower() or 'problem' in i.lower() for i in insights):
-            recommendations.append('✓ Problem is validated and urgent')
+            recommendations.append('Problem is validated and urgent')
         else:
-            recommendations.append('⚠ Problem validation may need more investigation')
+            recommendations.append('Problem validation may need more investigation')
 
         if any('price' in i.lower() or 'cost' in i.lower() for i in insights):
-            recommendations.append('✓ Consider pricing strategy in product planning')
+            recommendations.append('Consider pricing strategy in product planning')
 
         return recommendations
 
@@ -438,11 +438,11 @@ class ProductValidationService:
         feature_count = len(mvp.core_features)
 
         if feature_count <= 3:
-            return '✓ Focused MVP - good scope for 8-week launch'
+            return 'Focused MVP - good scope for 8-week launch'
         elif feature_count <= 6:
-            return '⚠ Moderate scope - ensure team capacity'
+            return 'Moderate scope - ensure team capacity'
         else:
-            return '✗ Scope too large for MVP - consider deferring non-critical features'
+            return 'Scope too large for MVP - consider deferring non-critical features'
 
     def identify_core_vs_nice_to_have(self, all_features: List[str]) -> Dict:
         """Identify core vs nice-to-have features"""

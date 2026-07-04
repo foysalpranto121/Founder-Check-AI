@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 
 # ============================================================================
@@ -6,7 +6,7 @@ from typing import Optional, List, Dict, Any
 # ============================================================================
 
 class AnalyzeIdeaRequest(BaseModel):
-    idea: str
+    idea: str = Field(min_length=10, max_length=5000)
     language: Optional[str] = "english"  # english, bangla, banglish
 
 

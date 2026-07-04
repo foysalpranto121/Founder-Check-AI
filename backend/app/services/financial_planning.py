@@ -103,13 +103,13 @@ class FinancialPlanningService:
     def _get_runway_recommendation(self, runway_months: float) -> str:
         """Get runway recommendation"""
         if runway_months < 3:
-            return '🔴 Critical: Start fundraising immediately'
+            return 'Critical: Start fundraising immediately'
         elif runway_months < 6:
-            return '🟡 Tight: Begin fundraising process now'
+            return 'Tight: Begin fundraising process now'
         elif runway_months < 12:
-            return '🟢 Comfortable: Plan fundraising for next quarter'
+            return 'Comfortable: Plan fundraising for next quarter'
         else:
-            return '✓ Strong: Focus on growth and metrics'
+            return 'Strong: Focus on growth and metrics'
 
     def calculate_burn_rate_scenarios(self, monthly_expenses: float, revenue: float) -> Dict:
         """Calculate different burn rate scenarios"""

@@ -47,11 +47,11 @@ const PlatformIntegrationsDashboard = () => {
   const [apiKeys, setApiKeys] = useState<APIKey[]>([]);
 
   const platforms = [
-    { key: 'slack', name: 'Slack', icon: '💬', description: 'Get milestone alerts in Slack' },
-    { key: 'google_drive', name: 'Google Drive', icon: '📁', description: 'Export reports to Google Drive' },
-    { key: 'notion', name: 'Notion', icon: '📝', description: 'Sync with Notion workspace' },
-    { key: 'zapier', name: 'Zapier', icon: '⚡', description: 'Connect to 5000+ apps' },
-    { key: 'gmail', name: 'Gmail', icon: '📧', description: 'Share reports via email' }
+    { key: 'slack', name: 'Slack', icon: '', description: 'Get milestone alerts in Slack' },
+    { key: 'google_drive', name: 'Google Drive', icon: '', description: 'Export reports to Google Drive' },
+    { key: 'notion', name: 'Notion', icon: '', description: 'Sync with Notion workspace' },
+    { key: 'zapier', name: 'Zapier', icon: '', description: 'Connect to 5000+ apps' },
+    { key: 'gmail', name: 'Gmail', icon: '', description: 'Share reports via email' }
   ];
 
   const loadIntegrations = async () => {
@@ -179,7 +179,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const renderMarketplaceTab = () => (
     <div style={{ padding: '2rem' }}>
-      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>🔌 Integration Marketplace</h3>
+      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Integration Marketplace</h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
         {platforms.map(platform => {
@@ -212,7 +212,7 @@ const PlatformIntegrationsDashboard = () => {
                   fontWeight: 'bold'
                 }}
               >
-                {isConnected ? '✓ Connected' : 'Connect'}
+                {isConnected ? 'Connected' : 'Connect'}
               </button>
             </div>
           );
@@ -247,7 +247,7 @@ const PlatformIntegrationsDashboard = () => {
   const renderCalendarTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>📅 Calendar & Milestones</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Calendar & Milestones</h3>
         <button
           onClick={createMilestone}
           style={{
@@ -306,7 +306,7 @@ const PlatformIntegrationsDashboard = () => {
   const renderRemindersTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>🔔 Reminders & Action Items</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>Reminders & Action Items</h3>
         <button
           onClick={createReminder}
           style={{
@@ -379,7 +379,7 @@ const PlatformIntegrationsDashboard = () => {
   const renderAPITab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>🔑 API Access & Webhooks</h3>
+        <h3 style={{ margin: 0, color: '#00ff41' }}>API Access & Webhooks</h3>
         <button
           onClick={generateAPIKey}
           style={{
@@ -498,10 +498,10 @@ const PlatformIntegrationsDashboard = () => {
         borderBottom: '1px solid #00ffee'
       }}>
         {[
-          { key: 'marketplace', label: '🔌 Marketplace', icon: '🔌' },
-          { key: 'calendar', label: '📅 Calendar', icon: '📅' },
-          { key: 'reminders', label: '🔔 Reminders', icon: '🔔' },
-          { key: 'api', label: '🔑 API Access', icon: '🔑' }
+          { key: 'marketplace', label: 'Marketplace', icon: '' },
+          { key: 'calendar', label: 'Calendar', icon: '' },
+          { key: 'reminders', label: 'Reminders', icon: '' },
+          { key: 'api', label: 'API Access', icon: '' }
         ].map(tab => (
           <button
             key={tab.key}
