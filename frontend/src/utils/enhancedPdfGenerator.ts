@@ -1,4 +1,4 @@
-import html2pdf from 'html2pdf.js';
+import { jsPDF } from 'jspdf';
 
 export interface AnalysisData {
   overall_readiness_score: number;
@@ -56,436 +56,496 @@ export interface AnalysisData {
   };
 }
 
+const NOT_AVAILABLE = 'Not available';
+
+// Page geometry (A4, portrait, mm)
+const PAGE_W = 210;
+const PAGE_H = 297;
+const MARGIN = 16;
+const CONTENT_W = PAGE_W - MARGIN * 2;
+
+// Palette
+const NAVY: [number, number, number] = [15, 42, 71];
+const GREEN: [number, number, number] = [0, 150, 60];
+const AMBER: [number, number, number] = [190, 130, 0];
+const RED: [number, number, number] = [200, 55, 45];
+const BLUE: [number, number, number] = [33, 120, 210];
+const GREY: [number, number, number] = [120, 120, 120];
+const DARK: [number, number, number] = [45, 45, 45];
+const LIGHT_BG: [number, number, number] = [246, 246, 246];
+
+const isNum = (v: unknown): v is number => typeof v === 'number' && isFinite(v);
+
+/** Displayable text for any field; never renders "undefined". Also maps
+ * characters outside jsPDF's built-in Latin fonts (like the taka sign)
+ * to readable ASCII so they cannot render as garbage glyphs. */
+const text = (v: unknown, fallback: string = NOT_AVAILABLE): string => {
+  if (v === null || v === undefined) return fallback;
+  let s = String(v).trim();
+  if (s === '' || s === 'undefined' || s === 'null') return fallback;
+  s = s.replace(/৳/g, 'BDT ');            // Bengali taka sign
+  s = s.replace(/[^\x20-\x7E]/g, '');          // strip other non-ASCII
+  return s.trim() || fallback;
+};
+
+const fmtScore = (v: unknown): string => (isNum(v) ? v.toFixed(1) : NOT_AVAILABLE);
+
+/** Parse a market share that may arrive as 30, "30", "30%" or be missing. */
+const parseShare = (v: unknown): number | null => {
+  if (isNum(v)) return Math.max(0, Math.min(100, v));
+  if (typeof v === 'string') {
+    const n = parseFloat(v.replace('%', '').trim());
+    if (isFinite(n)) return Math.max(0, Math.min(100, n));
+  }
+  return null;
+};
+
+const statusText = (score: number | null) => {
+  if (!isNum(score)) return NOT_AVAILABLE;
+  if (score >= 8) return 'STRONG';
+  if (score >= 6) return 'MODERATE';
+  return 'NEEDS WORK';
+};
+
+const scoreColor = (score: number | null): [number, number, number] => {
+  if (!isNum(score)) return GREY;
+  if (score >= 8) return GREEN;
+  if (score >= 6) return AMBER;
+  return RED;
+};
+
 export const generateEnhancedPDF = (analysis: AnalysisData) => {
-  // Safe data extraction with fallbacks
-  const readinessScore = analysis.overall_readiness_score ?? 5;
-  const marketScore = analysis.demand_analysis?.score ?? 5;
-  const riskScore = analysis.risk_assessment?.overall_risk_score ?? 5;
-  const founderFitScore = analysis.founder_fit?.fit_score ?? 5;
-  const bangladeshScore = analysis.bangladesh_impact?.impact_score ?? 5;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  let y = MARGIN;
 
-  // Helper to get color based on score
-  const getScoreColor = (score: number) => {
-    if (score >= 8) return '#00ff41';
-    if (score >= 6) return '#ffaa00';
-    return '#ff4444';
+  const readiness = isNum(analysis.overall_readiness_score) ? analysis.overall_readiness_score : null;
+  const marketScore = isNum(analysis.demand_analysis?.score) ? analysis.demand_analysis!.score : null;
+  const regulatoryRisk = isNum(analysis.regulatory_analysis?.risk_score) ? analysis.regulatory_analysis!.risk_score : null;
+  const riskAssessScore = isNum(analysis.risk_assessment?.overall_risk_score) ? analysis.risk_assessment!.overall_risk_score : null;
+  const founderFit = isNum(analysis.founder_fit?.fit_score) ? analysis.founder_fit!.fit_score : null;
+  const bdScore = isNum(analysis.bangladesh_impact?.impact_score) ? analysis.bangladesh_impact!.impact_score : null;
+
+  // ----- layout plumbing ---------------------------------------------------
+
+  /** Start a new page if fewer than `need` mm remain. */
+  const ensure = (need: number) => {
+    if (y + need > PAGE_H - MARGIN) {
+      doc.addPage();
+      y = MARGIN;
+    }
   };
 
-  // Helper to get status text
-  const getStatusText = (score: number) => {
-    if (score >= 8) return 'STRONG';
-    if (score >= 6) return 'MODERATE';
-    return 'NEEDS WORK';
+  const newPage = () => {
+    doc.addPage();
+    y = MARGIN;
   };
 
-  // Generate bar chart for market share
-  const generateMarketShareChart = () => {
-    const competitors = analysis.competitor_analysis?.direct_competitors?.slice(0, 5) || [];
-    if (competitors.length === 0) return '';
-
-    return competitors.map((c: any, i: number) => {
-      const share = parseInt(c.market_share) || 20;
-      const colors = ['#2196f3', '#ff9800', '#4caf50', '#f44336', '#9c27b0'];
-      return `
-        <div style="margin-bottom: 12px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-size: 11px; font-weight: 600; color: #333;">
-              ${i + 1}. ${c.name}
-            </span>
-            <span style="font-size: 11px; font-weight: 700; color: ${colors[i]};">
-              ${c.market_share_display}
-            </span>
-          </div>
-          <div style="height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
-            <div style="height: 100%; background: ${colors[i]}; width: ${share}%; transition: width 0.3s;"></div>
-          </div>
-        </div>
-      `;
-    }).join('');
+  const pageTitle = (title: string) => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(19);
+    doc.setTextColor(...NAVY);
+    doc.text(title, MARGIN, y + 6);
+    doc.setDrawColor(0, 200, 80);
+    doc.setLineWidth(1);
+    doc.line(MARGIN, y + 10, MARGIN + CONTENT_W, y + 10);
+    y += 18;
   };
 
-  // Generate SWOT details
-  const generateSWOTDetails = () => {
-    const swot = analysis.swot_analysis || { strengths: [], weaknesses: [], opportunities: [], threats: [] };
-
-    return `
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div style="padding: 15px; background: rgba(0, 255, 65, 0.08); border-left: 3px solid #00ff41; border-radius: 6px;">
-          <h5 style="color: #00ff41; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">STRENGTHS (${swot.strengths?.length || 0})</h5>
-          ${(swot.strengths || []).map((s: string) => `
-            <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;"></span> ${s}
-            </p>
-          `).join('')}
-        </div>
-
-        <div style="padding: 15px; background: rgba(255, 170, 0, 0.08); border-left: 3px solid #ffaa00; border-radius: 6px;">
-          <h5 style="color: #ffaa00; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">WEAKNESSES (${swot.weaknesses?.length || 0})</h5>
-          ${(swot.weaknesses || []).map((w: string) => `
-            <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #ffaa00; font-weight: bold;"></span> ${w}
-            </p>
-          `).join('')}
-        </div>
-
-        <div style="padding: 15px; background: rgba(33, 150, 243, 0.08); border-left: 3px solid #2196f3; border-radius: 6px;">
-          <h5 style="color: #2196f3; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">OPPORTUNITIES (${swot.opportunities?.length || 0})</h5>
-          ${(swot.opportunities || []).map((o: string) => `
-            <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #2196f3; font-weight: bold;">→</span> ${o}
-            </p>
-          `).join('')}
-        </div>
-
-        <div style="padding: 15px; background: rgba(244, 67, 54, 0.08); border-left: 3px solid #f44336; border-radius: 6px;">
-          <h5 style="color: #f44336; margin: 0 0 10px 0; font-size: 12px; font-weight: 700;">THREATS (${swot.threats?.length || 0})</h5>
-          ${(swot.threats || []).map((t: string) => `
-            <p style="font-size: 11px; color: #333; margin: 6px 0; padding-left: 15px; position: relative;">
-              <span style="position: absolute; left: 0; color: #f44336; font-weight: bold;"></span> ${t}
-            </p>
-          `).join('')}
-        </div>
-      </div>
-    `;
+  const sectionTitle = (title: string) => {
+    ensure(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(...NAVY);
+    doc.text(title, MARGIN, y + 4);
+    doc.setDrawColor(210, 210, 210);
+    doc.setLineWidth(0.4);
+    doc.line(MARGIN, y + 6.5, MARGIN + CONTENT_W, y + 6.5);
+    y += 12;
   };
 
-  // Generate skills progress bars
-  const generateSkillsBars = () => {
-    const skills = analysis.founder_fit?.required_skills || [];
-    if (skills.length === 0) return '';
-
-    return skills.map((skill: string, i: number) => {
-      const proficiencies = [70, 60, 50, 45];
-      const prof = proficiencies[i] || 40;
-      return `
-        <div style="margin-bottom: 10px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-            <span style="font-size: 11px; font-weight: 600; color: #333;">${skill}</span>
-            <span style="font-size: 10px; color: #999;">${prof}%</span>
-          </div>
-          <div style="height: 5px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
-            <div style="height: 100%; background: linear-gradient(90deg, #2196f3, #00ff41); width: ${prof}%;"></div>
-          </div>
-        </div>
-      `;
-    }).join('');
+  /** Wrapped paragraph; breaks across pages safely. */
+  const paragraph = (value: string, size = 9.5, color: [number, number, number] = DARK, indent = 0) => {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(size);
+    doc.setTextColor(...color);
+    const lines: string[] = doc.splitTextToSize(value, CONTENT_W - indent);
+    const lineH = size * 0.5;
+    for (const line of lines) {
+      ensure(lineH + 2);
+      doc.text(line, MARGIN + indent, y);
+      y += lineH;
+    }
+    y += 2;
   };
 
-  // Generate competitor table
-  const generateCompetitorTable = () => {
-    const competitors = analysis.competitor_analysis?.direct_competitors?.slice(0, 5) || [];
-    if (competitors.length === 0) return '';
-
-    return `
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px;">
-        <thead>
-          <tr style="background: linear-gradient(135deg, #0f2a47 0%, #1a3a5c 100%); color: white;">
-            <th style="padding: 8px; text-align: left; font-weight: 600;">Rank</th>
-            <th style="padding: 8px; text-align: left; font-weight: 600;">Company</th>
-            <th style="padding: 8px; text-align: center; font-weight: 600;">Market Share</th>
-            <th style="padding: 8px; text-align: right; font-weight: 600;">Revenue</th>
-            <th style="padding: 8px; text-align: right; font-weight: 600;">Users</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${competitors.map((c: any, i: number) => `
-            <tr style="border-bottom: 1px solid #e0e0e0; background: ${i % 2 === 0 ? '#f9f9f9' : 'white'};">
-              <td style="padding: 8px; color: #00ff41; font-weight: 700;">#${c.rank}</td>
-              <td style="padding: 8px; font-weight: 600; color: #0f2a47;">${c.name}</td>
-              <td style="padding: 8px; text-align: center; font-weight: 700; color: #2196f3;">${c.market_share_display}</td>
-              <td style="padding: 8px; text-align: right; color: #666;">${c.estimated_revenue || 'N/A'}</td>
-              <td style="padding: 8px; text-align: right; color: #666;">${c.users || 'N/A'}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
+  const bullets = (items: unknown[], color: [number, number, number] = DARK) => {
+    if (!items || items.length === 0) {
+      paragraph(NOT_AVAILABLE, 9.5, GREY);
+      return;
+    }
+    for (const item of items) {
+      const t = text(item, '');
+      if (!t) continue;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      doc.setTextColor(...color);
+      const lines: string[] = doc.splitTextToSize(t, CONTENT_W - 6);
+      ensure(lines.length * 4.8 + 2);
+      doc.text('-', MARGIN + 1, y);
+      for (const line of lines) {
+        doc.text(line, MARGIN + 6, y);
+        y += 4.8;
+      }
+      y += 0.8;
+    }
+    y += 2;
   };
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-          font-family: 'Segoe UI', sans-serif;
-          background: #f5f5f5;
-          color: #333;
-          line-height: 1.5;
-        }
-        .page {
-          width: 210mm;
-          height: 297mm;
-          margin: 0 auto;
-          padding: 0;
-          background: white;
-          page-break-after: always;
-        }
-        .content-page { padding: 20mm; }
-        .cover-page {
-          background: linear-gradient(135deg, #0f2a47 0%, #1a3a5c 100%);
-          color: white;
-          padding: 40mm;
-          height: 297mm;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
-        .logo-text { font-size: 48px; font-weight: 900; color: #00ff41; margin-bottom: 10px; }
-        .subtitle-cover { font-size: 16px; color: #00ffee; letter-spacing: 2px; text-transform: uppercase; }
-        .startup-title { font-size: 48px; font-weight: 900; margin-bottom: 20px; color: white; line-height: 1.2; }
-        .startup-desc { font-size: 16px; color: #ccc; margin-bottom: 40px; line-height: 1.6; }
-        .score-display {
-          background: rgba(0, 255, 65, 0.1);
-          border: 2px solid #00ff41;
-          border-radius: 20px;
-          padding: 30px;
-          display: inline-block;
-          margin-bottom: 40px;
-        }
-        .score-big { font-size: 72px; font-weight: 900; color: #00ff41; }
-        .score-status { font-size: 18px; margin-top: 10px; font-weight: bold; }
-        .kpi-grid {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 12px;
-          margin-bottom: 20px;
-        }
-        .kpi-card {
-          background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
-          border-left: 4px solid #00ff41;
-          padding: 16px;
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .kpi-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-        .kpi-value { font-size: 22px; font-weight: 900; color: #00ff41; }
-        .kpi-subtext { font-size: 10px; color: #999; margin-top: 4px; }
-        .page-title { font-size: 28px; font-weight: 900; color: #0f2a47; margin-bottom: 20px; border-bottom: 3px solid #00ff41; padding-bottom: 12px; }
-        .section-title { font-size: 14px; font-weight: 800; color: #0f2a47; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
-        .gauge-svg { width: 80px; height: 80px; margin: 0 auto 8px; }
-        .gauge-container { text-align: center; flex: 1; }
-        .gauges-flex { display: flex; gap: 15px; justify-content: space-around; margin-bottom: 25px; }
-        @media print { .page { box-shadow: none; margin: 0; } }
-      </style>
-    </head>
-    <body>
-      <!-- COVER PAGE -->
-      <div class="page cover-page">
-        <div style="text-align: center;">
-          <div class="logo-text">FounderCheck</div>
-          <div class="subtitle-cover">Analysis Report</div>
-        </div>
+  /** One stat card with label + value; drawn at x with given width. */
+  const statCard = (x: number, w: number, label: string, value: string, valueColor: [number, number, number]) => {
+    const h = 20;
+    doc.setFillColor(...LIGHT_BG);
+    doc.roundedRect(x, y, w, h, 1.5, 1.5, 'F');
+    doc.setFillColor(...valueColor);
+    doc.rect(x, y, 1.4, h, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...GREY);
+    doc.text(label.toUpperCase(), x + 4, y + 5.5);
+    const isNa = value === NOT_AVAILABLE;
+    doc.setFontSize(isNa ? 8 : 13);
+    doc.setTextColor(...valueColor);
+    doc.text(value, x + 4, y + (isNa ? 12.5 : 14));
+  };
 
-        <div style="text-align: center;">
-          <h1 class="startup-title">${analysis.idea_extraction?.title || 'Startup Analysis'}</h1>
-          <p class="startup-desc">${analysis.idea_extraction?.description || ''}</p>
-          <div class="score-display">
-            <div class="score-big">${readinessScore.toFixed(1)}</div>
-            <div style="font-size: 14px; color: #ccc; margin-top: 5px;">/ 10</div>
-            <div class="score-status" style="color: ${getScoreColor(readinessScore)};">${getStatusText(readinessScore)}</div>
-          </div>
-        </div>
+  // ----- cover page ---------------------------------------------------------
 
-        <div style="text-align: center; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
-          <div style="font-size: 12px; color: #aaa;">Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-          <div style="font-size: 12px; color: #aaa;">FounderCheck - AI-Powered Startup Validator</div>
-        </div>
-      </div>
+  doc.setFillColor(...NAVY);
+  doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
 
-      <!-- PAGE 2: EXECUTIVE DASHBOARD -->
-      <div class="page content-page">
-        <h1 class="page-title">Executive Dashboard</h1>
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(30);
+  doc.setTextColor(0, 255, 65);
+  doc.text('FounderCheck', PAGE_W / 2, 45, { align: 'center' });
+  doc.setFontSize(11);
+  doc.setTextColor(0, 220, 220);
+  doc.text('ANALYSIS REPORT', PAGE_W / 2, 54, { align: 'center' });
 
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">Readiness</div>
-            <div class="kpi-value">${readinessScore.toFixed(1)}</div>
-            <div class="kpi-subtext">${getStatusText(readinessScore)}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Market</div>
-            <div class="kpi-value">${marketScore.toFixed(1)}</div>
-            <div class="kpi-subtext">Demand Score</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Risk</div>
-            <div class="kpi-value">${riskScore.toFixed(1)}</div>
-            <div class="kpi-subtext">Assessment</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Founder Fit</div>
-            <div class="kpi-value">${founderFitScore.toFixed(1)}</div>
-            <div class="kpi-subtext">Capability</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">BD Impact</div>
-            <div class="kpi-value">${bangladeshScore.toFixed(1)}</div>
-            <div class="kpi-subtext">Market Score</div>
-          </div>
-        </div>
+  doc.setFontSize(20);
+  doc.setTextColor(255, 255, 255);
+  const titleLines: string[] = doc.splitTextToSize(text(analysis.idea_extraction?.title, 'Startup Analysis'), 160);
+  let coverY = 110;
+  for (const line of titleLines.slice(0, 4)) {
+    doc.text(line, PAGE_W / 2, coverY, { align: 'center' });
+    coverY += 9;
+  }
 
-        <h3 class="section-title">Market Metrics</h3>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
-          <thead>
-            <tr style="background: #f0f0f0;">
-              <th style="padding: 10px; text-align: left; font-weight: 600;">Metric</th>
-              <th style="padding: 10px; text-align: left; font-weight: 600;">Value</th>
-              <th style="padding: 10px; text-align: left; font-weight: 600;">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom: 1px solid #e0e0e0;">
-              <td style="padding: 10px;">Market Size</td>
-              <td style="padding: 10px; font-weight: 600;">${analysis.demand_analysis?.market_size || 'N/A'}</td>
-              <td style="padding: 10px; color: ${marketScore >= 7 ? '#00ff41' : marketScore >= 5 ? '#ffaa00' : '#ff4444'};">
-                ${marketScore >= 7 ? 'Strong' : marketScore >= 5 ? 'Moderate' : 'Limited'}
-              </td>
-            </tr>
-            <tr style="border-bottom: 1px solid #e0e0e0; background: #f9f9f9;">
-              <td style="padding: 10px;">Sector</td>
-              <td style="padding: 10px; font-weight: 600;">${analysis.idea_extraction?.sector || 'N/A'}</td>
-              <td style="padding: 10px;">Industry Focus</td>
-            </tr>
-            <tr style="border-bottom: 1px solid #e0e0e0;">
-              <td style="padding: 10px;">Regulatory Risk</td>
-              <td style="padding: 10px; font-weight: 600; color: ${getScoreColor(riskScore)};">${riskScore.toFixed(1)}/10</td>
-              <td style="padding: 10px; color: ${riskScore >= 7 ? '#ff4444' : riskScore >= 5 ? '#ffaa00' : '#00ff41'};">
-                ${riskScore >= 7 ? 'High Risk' : riskScore >= 5 ? 'Moderate' : 'Low Risk'}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(200, 200, 200);
+  const descLines: string[] = doc.splitTextToSize(text(analysis.idea_extraction?.description, ''), 150);
+  coverY += 4;
+  for (const line of descLines.slice(0, 3)) {
+    doc.text(line, PAGE_W / 2, coverY, { align: 'center' });
+    coverY += 5.5;
+  }
 
-        <h3 class="section-title">Key Opportunities</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-          ${(analysis.demand_analysis?.opportunities || []).slice(0, 4).map((opp: string) => `
-            <div style="padding: 10px; background: rgba(0, 255, 65, 0.08); border-left: 3px solid #00ff41; border-radius: 4px; font-size: 11px; color: #333;">
-              <span style="color: #00ff41; font-weight: bold;"></span> ${opp}
-            </div>
-          `).join('')}
-        </div>
-      </div>
+  // Score box
+  const boxW = 70;
+  const boxX = (PAGE_W - boxW) / 2;
+  const boxY = coverY + 10;
+  doc.setDrawColor(0, 255, 65);
+  doc.setLineWidth(0.8);
+  doc.roundedRect(boxX, boxY, boxW, 42, 4, 4, 'S');
+  doc.setFont('helvetica', 'bold');
+  if (readiness !== null) {
+    doc.setFontSize(34);
+    doc.setTextColor(0, 255, 65);
+    doc.text(readiness.toFixed(1), PAGE_W / 2, boxY + 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setTextColor(190, 190, 190);
+    doc.text('/ 10', PAGE_W / 2, boxY + 27, { align: 'center' });
+  } else {
+    doc.setFontSize(13);
+    doc.setTextColor(0, 255, 65);
+    doc.text(NOT_AVAILABLE, PAGE_W / 2, boxY + 22, { align: 'center' });
+  }
+  doc.setFontSize(12);
+  doc.setTextColor(0, 255, 65);
+  doc.text(statusText(readiness), PAGE_W / 2, boxY + 36, { align: 'center' });
 
-      <!-- PAGE 3: COMPETITIVE ANALYSIS -->
-      <div class="page content-page">
-        <h1 class="page-title">Competitive Landscape</h1>
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(170, 170, 170);
+  const generated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  doc.text(`Generated on ${generated}`, PAGE_W / 2, 262, { align: 'center' });
+  doc.text('FounderCheck - AI-Powered Startup Validator', PAGE_W / 2, 268, { align: 'center' });
+  doc.setFontSize(7.5);
+  doc.setTextColor(140, 140, 140);
+  doc.text('AI-generated assessment for exploration and learning, not investment advice.', PAGE_W / 2, 276, { align: 'center' });
 
-        <h3 class="section-title">Market Share Distribution</h3>
-        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-          ${generateMarketShareChart()}
-        </div>
+  // ----- page 2: executive dashboard ----------------------------------------
 
-        <h3 class="section-title">Competitor Rankings</h3>
-        ${generateCompetitorTable()}
+  newPage();
+  pageTitle('Executive Dashboard');
 
-        <h3 class="section-title">Strategic Position</h3>
-        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #00ff41; margin-bottom: 15px; font-size: 11px;">
-          <p style="margin-bottom: 8px;">
-            <strong style="color: #0f2a47;">Advantage:</strong> ${analysis.competitor_analysis?.competitive_advantage || 'N/A'}
-          </p>
-          <p style="color: #666;">
-            <strong>Threat Level:</strong>
-            <span style="font-weight: 700; color: ${analysis.competitor_analysis?.threat_level === 'HIGH' ? '#ff4444' : '#ffaa00'};">
-              ${analysis.competitor_analysis?.threat_level || 'MODERATE'}
-            </span>
-          </p>
-        </div>
-      </div>
+  const cardW = (CONTENT_W - 4 * 4) / 5;
+  const cards: Array<[string, string, [number, number, number]]> = [
+    ['Readiness', fmtScore(readiness), scoreColor(readiness)],
+    ['Market', fmtScore(marketScore), scoreColor(marketScore)],
+    ['Reg. Risk', fmtScore(regulatoryRisk), isNum(regulatoryRisk) ? scoreColor(10 - regulatoryRisk) : GREY],
+    ['Founder Fit', fmtScore(founderFit), scoreColor(founderFit)],
+    ['BD Impact', fmtScore(bdScore), scoreColor(bdScore)],
+  ];
+  cards.forEach(([label, value, color], i) => statCard(MARGIN + i * (cardW + 4), cardW, label, value, color));
+  y += 26;
 
-      <!-- PAGE 4: SWOT ANALYSIS -->
-      <div class="page content-page">
-        <h1 class="page-title">SWOT Analysis</h1>
-        ${generateSWOTDetails()}
-      </div>
+  sectionTitle('Market Metrics');
+  const metricRow = (label: string, value: string, status: string, statusColor: [number, number, number], shade: boolean) => {
+    // Guard every cell and set the row font BEFORE measuring the wrap, so
+    // splitTextToSize uses the same metrics the text is drawn with. The
+    // value column is 88mm wide (62mm to 150mm); status starts at 156mm.
+    const safeLabel = text(label);
+    const safeValue = text(value);
+    const safeStatus = text(status);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    const valueLines: string[] = doc.splitTextToSize(safeValue, 88);
+    const rowH = Math.max(9, valueLines.length * 4.4 + 4.5);
+    ensure(rowH);
+    if (shade) {
+      doc.setFillColor(...LIGHT_BG);
+      doc.rect(MARGIN, y - 4, CONTENT_W, rowH, 'F');
+    }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...DARK);
+    doc.text(safeLabel, MARGIN + 2, y + 1);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...DARK);
+    doc.text(valueLines, MARGIN + 46, y + 1);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...statusColor);
+    doc.text(safeStatus, MARGIN + 140, y + 1);
+    y += rowH;
+  };
+  metricRow('Market Size', text(analysis.demand_analysis?.market_size), isNum(marketScore) ? (marketScore >= 7 ? 'Strong' : marketScore >= 5 ? 'Moderate' : 'Limited') : NOT_AVAILABLE, scoreColor(marketScore), false);
+  metricRow('Sector', text(analysis.idea_extraction?.sector), 'Industry focus', GREY, true);
+  metricRow('Regulatory Risk', isNum(regulatoryRisk) ? `${regulatoryRisk.toFixed(1)}/10` : NOT_AVAILABLE, isNum(regulatoryRisk) ? (regulatoryRisk >= 7 ? 'High risk' : regulatoryRisk >= 5 ? 'Moderate' : 'Low risk') : NOT_AVAILABLE, isNum(regulatoryRisk) ? scoreColor(10 - regulatoryRisk) : GREY, false);
+  metricRow('Target Customer', text(analysis.idea_extraction?.target_customer), 'Audience', GREY, true);
+  metricRow('Revenue Model', text(analysis.idea_extraction?.revenue_model), 'Monetization', GREY, false);
+  y += 4;
 
-      <!-- PAGE 5: RISKS & FOUNDER FIT -->
-      <div class="page content-page">
-        <h1 class="page-title">Risk & Founder Fit</h1>
+  sectionTitle('Key Opportunities');
+  bullets((analysis.demand_analysis?.opportunities || []).slice(0, 4));
 
-        <h3 class="section-title">Risk Assessment</h3>
-        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-          <div style="flex: 1; padding: 15px; background: rgba(244, 67, 54, 0.08); border-radius: 8px; border-left: 3px solid #f44336;">
-            <p style="font-size: 10px; color: #999; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">Overall Risk Score</p>
-            <p style="font-size: 28px; font-weight: 900; color: ${getScoreColor(riskScore)};">${riskScore.toFixed(1)}/10</p>
-          </div>
-          <div style="flex: 1; padding: 15px; background: rgba(244, 67, 54, 0.08); border-radius: 8px; border-left: 3px solid #f44336;">
-            <p style="font-size: 10px; color: #999; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">High Priority Risks</p>
-            <p style="font-size: 28px; font-weight: 900; color: #f44336;">${analysis.risk_assessment?.high_risks?.length || 0}</p>
-          </div>
-        </div>
+  sectionTitle('Key Threats');
+  bullets((analysis.demand_analysis?.threats || []).slice(0, 3));
 
-        ${(analysis.risk_assessment?.high_risks || []).slice(0, 2).map((r: any) => `
-          <div style="padding: 12px; background: rgba(244, 67, 54, 0.1); border-left: 3px solid #f44336; border-radius: 6px; margin-bottom: 10px; font-size: 11px;">
-            <p style="font-weight: 700; color: #f44336; margin-bottom: 4px;">${r.risk}</p>
-            <p style="color: #666; margin-bottom: 3px;">${r.probability} | ${r.impact}</p>
-            <p style="color: #00ff41;">${r.mitigation}</p>
-          </div>
-        `).join('')}
+  // ----- page 3: competitive landscape ---------------------------------------
 
-        <h3 class="section-title">Founder-Market Fit</h3>
-        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-          <div style="flex: 1; text-align: center; padding: 15px; background: rgba(33, 150, 243, 0.08); border-radius: 8px; border-left: 3px solid #2196f3;">
-            <p style="font-size: 10px; color: #999; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">Fit Score</p>
-            <p style="font-size: 28px; font-weight: 900; color: #2196f3;">${founderFitScore.toFixed(1)}/10</p>
-          </div>
-          <div style="flex: 2;">
-            <h4 style="font-size: 11px; font-weight: 700; margin-bottom: 8px; color: #0f2a47;">Required Skills</h4>
-            ${generateSkillsBars()}
-          </div>
-        </div>
-      </div>
+  newPage();
+  pageTitle('Competitive Landscape');
 
-      <!-- PAGE 6: BANGLADESH & GTM -->
-      <div class="page content-page">
-        <h1 class="page-title">Bangladesh Impact & GTM</h1>
+  const competitors = (analysis.competitor_analysis?.direct_competitors || []).slice(0, 5);
+  const barColors: Array<[number, number, number]> = [BLUE, [235, 140, 0], GREEN, RED, [140, 60, 170]];
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-          <div style="padding: 15px; background: rgba(33, 150, 243, 0.08); border-left: 3px solid #2196f3; border-radius: 8px;">
-            <p style="font-size: 10px; color: #999; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">Impact Score</p>
-            <p style="font-size: 28px; font-weight: 900; color: #2196f3;">${bangladeshScore.toFixed(1)}/10</p>
-          </div>
-          <div style="padding: 15px; background: rgba(33, 150, 243, 0.08); border-left: 3px solid #2196f3; border-radius: 8px;">
-            <p style="font-size: 10px; color: #999; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">Recommendations</p>
-            <p style="font-size: 28px; font-weight: 900; color: #2196f3;">${analysis.bangladesh_impact?.localization_recommendations?.length || 0}</p>
-          </div>
-        </div>
+  sectionTitle('Market Share Distribution');
+  if (competitors.length === 0) {
+    paragraph('Competitor data not available.', 9.5, GREY);
+  } else {
+    competitors.forEach((c: any, i: number) => {
+      ensure(13);
+      const share = parseShare(c.market_share);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...DARK);
+      doc.text(`${i + 1}. ${text(c.name, 'Unnamed competitor')}`, MARGIN, y);
+      doc.setTextColor(...barColors[i]);
+      doc.text(share !== null ? `${share}%` : NOT_AVAILABLE, MARGIN + CONTENT_W, y, { align: 'right' });
+      // Track and fill
+      doc.setFillColor(228, 228, 228);
+      doc.rect(MARGIN, y + 2, CONTENT_W, 2.6, 'F');
+      if (share !== null && share > 0) {
+        doc.setFillColor(...barColors[i]);
+        doc.rect(MARGIN, y + 2, (CONTENT_W * share) / 100, 2.6, 'F');
+      }
+      y += 10;
+    });
+    y += 2;
+  }
 
-        <h3 class="section-title">Market Opportunity</h3>
-        <p style="font-size: 11px; color: #666; line-height: 1.6; padding: 12px; background: #f9f9f9; border-radius: 6px; border-left: 3px solid #00ff41; margin-bottom: 20px;">
-          ${analysis.bangladesh_impact?.market_potential || 'N/A'}
-        </p>
+  sectionTitle('Competitor Rankings');
+  if (competitors.length === 0) {
+    paragraph('Competitor data not available.', 9.5, GREY);
+  } else {
+    // Header
+    ensure(9);
+    doc.setFillColor(...NAVY);
+    doc.rect(MARGIN, y - 4, CONTENT_W, 8, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(255, 255, 255);
+    doc.text('#', MARGIN + 2, y + 1);
+    doc.text('Company', MARGIN + 9, y + 1);
+    doc.text('Share', MARGIN + 62, y + 1);
+    doc.text('Strength', MARGIN + 78, y + 1);
+    doc.text('Weakness', MARGIN + 129, y + 1);
+    y += 8;
 
-        <h3 class="section-title">Go-to-Market Roadmap</h3>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-          <div style="padding: 12px; background: rgba(0, 255, 65, 0.08); border-left: 3px solid #00ff41; border-radius: 6px;">
-            <p style="font-size: 11px; font-weight: 700; color: #00ff41; margin-bottom: 6px;">Phase 1: Launch</p>
-            <p style="font-size: 10px; color: #666; line-height: 1.5;">${analysis.go_to_market?.phase_1?.substring(0, 60) || 'Plan launch strategy'}</p>
-          </div>
-          <div style="padding: 12px; background: rgba(255, 170, 0, 0.08); border-left: 3px solid #ffaa00; border-radius: 6px;">
-            <p style="font-size: 11px; font-weight: 700; color: #ffaa00; margin-bottom: 6px;">Phase 2: Growth</p>
-            <p style="font-size: 10px; color: #666; line-height: 1.5;">${analysis.go_to_market?.phase_2?.substring(0, 60) || 'Scale operations'}</p>
-          </div>
-          <div style="padding: 12px; background: rgba(76, 175, 80, 0.08); border-left: 3px solid #4caf50; border-radius: 6px;">
-            <p style="font-size: 11px; font-weight: 700; color: #4caf50; margin-bottom: 6px;">Phase 3: Scale</p>
-            <p style="font-size: 10px; color: #666; line-height: 1.5;">${analysis.go_to_market?.phase_3?.substring(0, 60) || 'Expand market'}</p>
-          </div>
-        </div>
-      </div>
+    competitors.forEach((c: any, i: number) => {
+      const strengthLines: string[] = doc.splitTextToSize(text(c.strength), 48);
+      const weaknessLines: string[] = doc.splitTextToSize(text(c.weakness), 48);
+      const nameLines: string[] = doc.splitTextToSize(text(c.name, 'Unnamed competitor'), 50);
+      const rowLines = Math.max(strengthLines.length, weaknessLines.length, nameLines.length);
+      const rowH = rowLines * 4 + 4;
+      ensure(rowH);
+      if (i % 2 === 0) {
+        doc.setFillColor(...LIGHT_BG);
+        doc.rect(MARGIN, y - 3.5, CONTENT_W, rowH, 'F');
+      }
+      const share = parseShare(c.market_share);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...NAVY);
+      doc.text(`${i + 1}`, MARGIN + 2, y + 1);
+      doc.text(nameLines, MARGIN + 9, y + 1);
+      doc.setTextColor(...BLUE);
+      doc.text(share !== null ? `${share}%` : 'N/A', MARGIN + 62, y + 1);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...DARK);
+      doc.text(strengthLines, MARGIN + 78, y + 1);
+      doc.text(weaknessLines, MARGIN + 129, y + 1);
+      y += rowH;
+    });
+    y += 4;
+  }
 
-    </body>
-    </html>
-  `;
+  sectionTitle('Strategic Position');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(...NAVY);
+  ensure(6);
+  doc.text('Advantage:', MARGIN, y);
+  doc.setFont('helvetica', 'normal');
+  y += 5;
+  paragraph(text(analysis.competitor_analysis?.competitive_advantage), 9.5, DARK, 2);
+  ensure(6);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...NAVY);
+  doc.text('Threat level:', MARGIN, y);
+  y += 5;
+  // The model sometimes returns a full sentence here, so wrap it like a paragraph.
+  const threat = text(analysis.competitor_analysis?.threat_level);
+  const threatColor = threat.toUpperCase().startsWith('HIGH') ? RED : threat === NOT_AVAILABLE ? GREY : AMBER;
+  paragraph(threat, 9.5, threatColor, 2);
+  y += 3;
 
-  const options = {
-    margin: 0,
-    filename: `${analysis.idea_extraction?.title?.replace(/\s+/g, '-') || 'analysis'}-professional-${new Date().getTime()}.pdf`,
-    image: { type: 'jpeg' as const, quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { orientation: 'portrait' as const, unit: 'mm', format: 'a4' }
-  } as any;
+  // ----- page 4: SWOT ---------------------------------------------------------
 
-  html2pdf().set(options).from(htmlContent).save();
+  newPage();
+  pageTitle('SWOT Analysis');
+
+  const swot = analysis.swot_analysis;
+  const swotBlock = (label: string, color: [number, number, number], items: unknown[] | undefined) => {
+    ensure(12);
+    doc.setFillColor(...color);
+    doc.rect(MARGIN, y - 3, 1.6, 6, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(...color);
+    doc.text(`${label} (${items?.length || 0})`, MARGIN + 5, y + 1);
+    y += 7;
+    bullets((items || []).slice(0, 5));
+  };
+  swotBlock('STRENGTHS', GREEN, swot?.strengths);
+  swotBlock('WEAKNESSES', AMBER, swot?.weaknesses);
+  swotBlock('OPPORTUNITIES', BLUE, swot?.opportunities);
+  swotBlock('THREATS', RED, swot?.threats);
+
+  // ----- page 5: risk & founder fit --------------------------------------------
+
+  newPage();
+  pageTitle('Risk & Founder Fit');
+
+  sectionTitle('Risk Assessment');
+  const halfW = (CONTENT_W - 6) / 2;
+  statCard(MARGIN, halfW, 'Overall Risk Score', isNum(riskAssessScore) ? `${riskAssessScore.toFixed(1)}/10` : NOT_AVAILABLE, isNum(riskAssessScore) ? scoreColor(10 - riskAssessScore) : GREY);
+  statCard(MARGIN + halfW + 6, halfW, 'High Priority Risks', String(analysis.risk_assessment?.high_risks?.length || 0), RED);
+  y += 26;
+
+  const highRisks = (analysis.risk_assessment?.high_risks || []).slice(0, 3);
+  if (highRisks.length === 0) {
+    paragraph('Detailed risk assessment not available for this analysis.', 9.5, GREY);
+  } else {
+    highRisks.forEach((r: any) => {
+      ensure(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(...RED);
+      doc.text(text(r?.risk), MARGIN, y);
+      y += 5;
+      paragraph(`Probability: ${text(r?.probability)}  |  Impact: ${text(r?.impact)}`, 9, GREY, 2);
+      paragraph(`Mitigation: ${text(r?.mitigation)}`, 9, GREEN, 2);
+      y += 1;
+    });
+  }
+  y += 2;
+
+  sectionTitle('Founder-Market Fit');
+  statCard(MARGIN, halfW, 'Fit Score', isNum(founderFit) ? `${founderFit.toFixed(1)}/10` : NOT_AVAILABLE, isNum(founderFit) ? BLUE : GREY);
+  y += 26;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...NAVY);
+  ensure(8);
+  doc.text('Required Skills', MARGIN, y);
+  y += 6;
+  bullets((analysis.founder_fit?.required_skills || []).slice(0, 6));
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...NAVY);
+  ensure(8);
+  doc.text('How to Improve Fit', MARGIN, y);
+  y += 6;
+  bullets((analysis.founder_fit?.improvement_areas || []).slice(0, 5));
+
+  // ----- page 6: Bangladesh impact & GTM ----------------------------------------
+
+  newPage();
+  pageTitle('Bangladesh Impact & GTM');
+
+  statCard(MARGIN, halfW, 'Impact Score', isNum(bdScore) ? `${bdScore.toFixed(1)}/10` : NOT_AVAILABLE, isNum(bdScore) ? BLUE : GREY);
+  statCard(MARGIN + halfW + 6, halfW, 'Localization Recommendations', String(analysis.bangladesh_impact?.localization_recommendations?.length || 0), BLUE);
+  y += 26;
+
+  sectionTitle('Market Opportunity');
+  paragraph(text(analysis.bangladesh_impact?.market_potential));
+
+  sectionTitle('Localization Recommendations');
+  bullets((analysis.bangladesh_impact?.localization_recommendations || []).slice(0, 5));
+
+  sectionTitle('Go-to-Market Roadmap');
+  const phase = (label: string, color: [number, number, number], value: unknown) => {
+    ensure(12);
+    doc.setFillColor(...color);
+    doc.rect(MARGIN, y - 3, 1.6, 6, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...color);
+    doc.text(label, MARGIN + 5, y + 1);
+    y += 6;
+    paragraph(text(value), 9.5, DARK, 2);
+    y += 1;
+  };
+  phase('Phase 1: Launch (30 days)', GREEN, analysis.go_to_market?.phase_1);
+  phase('Phase 2: Growth (60 days)', AMBER, analysis.go_to_market?.phase_2);
+  phase('Phase 3: Scale (90 days)', BLUE, analysis.go_to_market?.phase_3);
+
+  // ----- save --------------------------------------------------------------------
+
+  const filename = `${text(analysis.idea_extraction?.title, 'analysis').replace(/\s+/g, '-').substring(0, 60)}-report-${Date.now()}.pdf`;
+  doc.save(filename);
 };
