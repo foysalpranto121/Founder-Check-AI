@@ -4,6 +4,17 @@
 ![Version](https://img.shields.io/badge/Version-1.0-blue?style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Multi%20Region-brightgreen?style=flat-square)
 
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=flat-square&logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5--turbo-412991?style=flat-square&logo=openai&logoColor=white)
+
+## Live Demo
+[Add live deployment link here]
+
 ## Overview
 
 FounderCheck is a comprehensive AI-powered startup validation platform designed for entrepreneurs across Bangladesh, India, Pakistan, and Southeast Asia. Leveraging OpenAI integration, it provides real-time, data-driven analysis of startup ideas across 15 complete business systems.
@@ -38,6 +49,11 @@ FounderCheck is a comprehensive AI-powered startup validation platform designed 
 13. Mobile & Offline Capabilities
 14. Multi-Language & Regional Localization
 15. Continuous Monitoring System
+
+---
+
+## Screenshots
+Screenshots will be added here.
 
 ---
 
