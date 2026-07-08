@@ -1,8 +1,4 @@
-# FounderCheck - Enterprise-Grade AI-Powered Startup Validator
-
-![Status](https://img.shields.io/badge/Status-Production%20Ready-green?style=flat-square)
-![Version](https://img.shields.io/badge/Version-1.0-blue?style=flat-square)
-![Platform](https://img.shields.io/badge/Platform-Multi%20Region-brightgreen?style=flat-square)
+# FounderCheck - AI-Powered Startup Validator
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=flat-square&logo=fastapi&logoColor=white)
@@ -17,38 +13,25 @@
 
 ## Overview
 
-FounderCheck is a comprehensive AI-powered startup validation platform designed for entrepreneurs across Bangladesh, India, Pakistan, and Southeast Asia. Leveraging OpenAI integration, it provides real-time, data-driven analysis of startup ideas across 15 complete business systems.
-
-**Process startup ideas in 30-45 seconds** with professional-grade intelligence comparable to enterprise consulting services.
-
----
+FounderCheck is an AI-powered startup validation platform built for entrepreneurs in Bangladesh. A founder describes a startup idea in plain language, and the platform runs it through demand validation, regulatory risk analysis, and business model scoring to produce an overall readiness score, along with deeper analysis covering financial projections, SWOT, go-to-market planning, and founder fit. A separate investor Q&A module lets founders practice answering investor-style questions, with each answer scored on relevance and specificity rather than a fixed number.
 
 ## Key Features
 
-### Core Analysis (45 seconds)
+### Core Analysis Pipeline
 - **Idea Extraction** - Automatic business concept classification
-- **Market Demand Analysis** - Real-time market opportunity scoring
-- **Regulatory Assessment** - Bangladesh-specific compliance framework
+- **Market Demand Analysis** - Market opportunity scoring
+- **Regulatory Risk Assessment** - Bangladesh-focused regulatory framing
 - **Business Model Canvas** - Structured business validation
-- **Investor Questions** - Professional pitch preparation
-- **Competitive Analysis** - Market landscape intelligence
+- **Extended Analysis** - Financial projections, SWOT, go-to-market plan, and founder fit, generated per idea
+- **Investor Q&A Practice** - Answers scored on relevance and specificity, verified to distinguish strong, weak, and off-topic responses
+- **PDF Export** - Generates a labeled, idea-specific report with no fabricated values
 
-### 15 Complete Systems
-1. PDF Export Engine
-2. Financial Projections (3-year forecasting)
-3. Team Collaboration Hub
-4. Market Intelligence Platform
-5. Financial Planning Tools
-6. Market Research Integration
-7. Product Validation Suite
-8. Platform Integrations (Slack, Google Drive, Notion, Zapier, Gmail)
-9. Educational Resources
-10. Startup School Academy
-11. Compliance & Legal Framework
-12. Advanced Analytics Dashboard
-13. Mobile & Offline Capabilities
-14. Multi-Language & Regional Localization
-15. Continuous Monitoring System
+### Authentication and Data
+- Email and password authentication with JWT, verified data isolation between users
+- Persistent storage in Postgres (Neon), confirmed to survive backend restarts
+
+### Additional Modules (early stage)
+The project also includes a number of additional feature areas (market intelligence, team collaboration, platform integrations, compliance and legal resources, analytics, mobile support, and others) built earlier in development. These currently serve placeholder or mock data and are not yet part of the tested, verified core flow above. They are included as a foundation for future work rather than finished features.
 
 ---
 
@@ -61,7 +44,7 @@ Screenshots will be added here.
 
 ### Prerequisites
 - Node.js 18+
-- Python 3.10+
+- Python 3.12+
 - OpenAI API key
 
 ### Installation
@@ -108,50 +91,46 @@ cd frontend && npm run dev
 
 ### Technology Stack
 - **Frontend:** React 18 + TypeScript + Vite
-- **Backend:** FastAPI + Python 3.10+
-- **AI/ML:** OpenAI GPT-3.5-turbo (parallel processing)
-- **Database:** SQLite (dev), PostgreSQL (production-ready)
-- **Export:** HTML2PDF with professional styling
+- **Backend:** FastAPI + Python 3.12
+- **AI/ML:** OpenAI GPT-3.5-turbo
+- **Database:** PostgreSQL (Neon), no local database fallback
+- **Export:** PDF generation with a text-based rendering engine
 
-### Performance
+### Verified Facts
 | Metric | Value |
 |--------|-------|
-| Analysis Speed | 30-45 seconds |
-| API Endpoints | 195+ |
-| AI Parallel Calls | 12 per analysis |
-| Languages | 3 (English, Bengali, Hindi) |
-| Regions | 4 (Bangladesh, India, Pakistan, SE Asia) |
-| User Roles | 6 types |
-
----
-
-## Regional Support
-
-- **Bangladesh** - $2.5B+ market, regulatory compliance framework
-- **India** - $40B+ market, regional customization
-- **Pakistan** - $1.2B+ market, localized insights
-- **Southeast Asia** - $50B+ market, multi-country support
+| Core analysis pipeline | Idea extraction, demand, regulatory risk, business model scoring |
+| Extended analysis | Financial projections, SWOT, go-to-market, founder fit |
+| User roles | 2 (founder, admin) |
+| Language | English |
+| Region | Bangladesh |
+| Registered backend routes | 168, a subset are the additional early-stage modules noted above |
 
 ---
 
 ## Use Cases
 
-- Pre-launch startup validation for founders
-- Investor pitch preparation and scoring
-- Accelerator program screening
-- Market opportunity assessment
-- Regulatory compliance planning
-- Team formation guidance
+- Pre-launch startup validation for first-time founders
+- Investor pitch preparation and practice
+- Market opportunity and regulatory risk assessment
+
+---
+
+## Roadmap
+
+- Sourced, citable regulatory and market data instead of purely AI-generated figures
+- Bangla language mode for the analysis output
+- Idea-specific financial projections
+- Wiring the risk assessment module into the core pipeline
 
 ---
 
 ## Security
 
-- CORS protection
-- API key validation
-- Role-based access control
-- Input validation & sanitization
-- Environment-based configuration
+- CORS restricted to a specific frontend origin
+- JWT-based authentication with bcrypt password hashing
+- Per-user data isolation, verified against cross-user access attempts
+- Input validation and sanitization before any data reaches an LLM prompt
 
 ---
 
@@ -171,10 +150,10 @@ http://localhost:5173
 
 ## Documentation
 
-See `DEVELOPMENT_STEPS.md` for complete development journey and implementation details.
+See `DEVELOPMENT_STEPS.md` for the complete development journey and implementation details.
 
 ---
 
-**FounderCheck v1.0** | July 2026 | Production Ready 
+**FounderCheck** | July 2026
 
-Empowering entrepreneurs across South Asia with AI-powered startup intelligence.
+Built to give first-time founders in Bangladesh honest, structured startup feedback.
