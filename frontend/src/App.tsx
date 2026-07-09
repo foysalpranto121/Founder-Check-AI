@@ -1498,8 +1498,11 @@ function App() {
                       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                         <div>
                           <p style={{color: '#8b9096', fontSize: '12px', marginBottom: '4px'}}>Overall Risk Score</p>
-                          <p style={{fontSize: '32px', fontWeight: 'bold', color: '#9C6B1F'}}>{analysis.risk_assessment?.overall_risk_score}/10</p>
+                          <p style={{fontSize: '32px', fontWeight: 'bold', color: '#9C6B1F'}}>{analysis.risk_assessment?.overall_risk_score != null ? `${Number(analysis.risk_assessment.overall_risk_score).toFixed(1)}/10` : 'Not scored'}</p>
                         </div>
+                        <p style={{color: '#5a6169', fontSize: '13px', maxWidth: '360px', textAlign: 'right'}}>
+                          Driven by {asList(analysis.risk_assessment?.high_risks).length} high priority and {asList(analysis.risk_assessment?.medium_risks).length} medium priority risks identified below. Higher scores mean greater risk.
+                        </p>
                       </div>
                     </div>
 
@@ -1516,11 +1519,11 @@ function App() {
                       {/* Background */}
                       <rect x="100" y="50" width="650" height="350" fill="url(#riskGradient)" stroke="#5a6169" strokeWidth="1"/>
 
-                      {/* Grid lines */}
-                      <line x1="100" y1="216" x2="750" y2="216" stroke="#5a6169" strokeWidth="1" opacity="0.5"/>
+                      {/* Grid lines: split the plot (x 100-750, y 50-400) at its center */}
+                      <line x1="100" y1="225" x2="750" y2="225" stroke="#5a6169" strokeWidth="1" opacity="0.5"/>
                       <line x1="425" y1="50" x2="425" y2="400" stroke="#5a6169" strokeWidth="1" opacity="0.5"/>
 
-                      {/* Axes */}
+                      {/* Axes: probability increases rightward, impact increases upward */}
                       <text x="50" y="410" fontSize="12" fill="#8b9096">Low</text>
                       <text x="700" y="410" fontSize="12" fill="#8b9096">High</text>
                       <text x="50" y="70" fontSize="12" fill="#8b9096">High</text>
@@ -1528,51 +1531,85 @@ function App() {
                       <text x="350" y="440" fontSize="12" fill="#8b9096" textAnchor="middle">PROBABILITY →</text>
                       <text x="20" y="220" fontSize="12" fill="#8b9096" textAnchor="middle" transform="rotate(-90 20 220)">IMPACT ↑</text>
 
-                      {/* Quadrant Labels */}
-                      <text x="250" y="80" fontSize="11" fill="#5A6B48" fontWeight="bold" textAnchor="middle">Low Priority</text>
-                      <text x="600" y="80" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Medium Priority</text>
-                      <text x="250" y="370" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Medium Priority</text>
-                      <text x="600" y="370" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Critical</text>
+                      {/* Quadrant labels keyed to the axes: priority rises with both
+                          probability (rightward) and impact (upward), so high/high is
+                          top-right (Critical) and low/low is bottom-left (Low). */}
+                      <text x="262" y="80" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Medium Priority</text>
+                      <text x="588" y="80" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Critical</text>
+                      <text x="262" y="370" fontSize="11" fill="#5A6B48" fontWeight="bold" textAnchor="middle">Low Priority</text>
+                      <text x="588" y="370" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Medium Priority</text>
 
-                      {/* Risk bubbles */}
-                      {analysis.risk_assessment?.high_risks?.map((_: any, i: number) => (
-                        <g key={i}>
-                          <circle cx={600 + (i * 20)} cy={120 + (i * 30)} r="25" fill="#9C6B1F" opacity="0.7"/>
-                          <text x={600 + (i * 20)} y={125 + (i * 30)} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">{i + 1}</text>
-                        </g>
-                      ))}
-                      {analysis.risk_assessment?.medium_risks?.map((_: any, i: number) => (
-                        <g key={i}>
-                          <circle cx={450 - (i * 25)} cy={250 + (i * 20)} r="22" fill="#9C6B1F" opacity="0.7"/>
-                          <text x={450 - (i * 25)} y={255 + (i * 20)} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">{i + 4}</text>
-                        </g>
-                      ))}
+                      {/* Risk bubbles placed from each risk's actual likelihood and
+                          impact, not its position in the list. */}
+                      {(() => {
+                        const axisFrac = (v: any) => {
+                          const s = String(v ?? '').toLowerCase()
+                          if (s.includes('high')) return 0.78
+                          if (s.includes('low')) return 0.22
+                          return 0.5
+                        }
+                        const px = (prob: any) => 100 + axisFrac(prob) * 650
+                        const py = (impact: any) => 400 - axisFrac(impact) * 350
+                        const bubbles = [
+                          ...asList(analysis.risk_assessment?.high_risks).slice(0, 3).map((r: any, i: number) => ({ r, n: i + 1 })),
+                          ...asList(analysis.risk_assessment?.medium_risks).slice(0, 3).map((r: any, i: number) => ({ r, n: i + 4 })),
+                        ]
+                        const seen: {[k: string]: number} = {}
+                        return bubbles.map((b, idx) => {
+                          let x = px(b.r?.probability)
+                          const y = py(b.r?.impact)
+                          const key = `${Math.round(x)},${Math.round(y)}`
+                          const stack = seen[key] || 0
+                          seen[key] = stack + 1
+                          x += stack * 26
+                          return (
+                            <g key={idx}>
+                              <circle cx={x} cy={y} r="22" fill="#9C6B1F" opacity="0.75"/>
+                              <text x={x} y={y + 4} textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold">{b.n}</text>
+                            </g>
+                          )
+                        })
+                      })()}
                     </svg>
 
                     <div className="grid-2" style={{marginTop: '30px'}}>
                       <div>
                         <h4>High Priority Risks</h4>
-                        {analysis.risk_assessment?.high_risks?.map((r: any, i: number) => (
+                        {asList(analysis.risk_assessment?.high_risks).length === 0 && (
+                          <p style={{fontSize: '13px', color: '#8b9096'}}>None identified.</p>
+                        )}
+                        {asList(analysis.risk_assessment?.high_risks).map((r: any, i: number) => (
                           <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '6px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
-                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#9C6B1F', color: '#23282e', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 1}</span>
-                              <strong style={{color: '#9C6B1F'}}>{r.risk}</strong>
+                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#9C6B1F', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 1}</span>
+                              <strong style={{color: '#9C6B1F'}}>{asText(r.risk ?? r)}</strong>
                             </div>
-                            <p style={{fontSize: '12px', margin: '4px 0', color: '#5a6169'}}>{r.probability} probability | {r.impact}</p>
-                            <p style={{fontSize: '12px', color: '#5A6B48', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
+                            {(r.probability != null || r.impact != null) && (
+                              <p style={{fontSize: '12px', margin: '4px 0', color: '#5a6169'}}>Likelihood: {asText(r.probability)} | Impact: {asText(r.impact)}</p>
+                            )}
+                            {r.mitigation != null && (
+                              <p style={{fontSize: '12px', color: '#5A6B48', marginTop: '8px'}}>Mitigation: {asText(r.mitigation)}</p>
+                            )}
                           </div>
                         ))}
                       </div>
                       <div>
                         <h4>Medium Priority Risks</h4>
-                        {analysis.risk_assessment?.medium_risks?.map((r: any, i: number) => (
+                        {asList(analysis.risk_assessment?.medium_risks).length === 0 && (
+                          <p style={{fontSize: '13px', color: '#8b9096'}}>None identified.</p>
+                        )}
+                        {asList(analysis.risk_assessment?.medium_risks).map((r: any, i: number) => (
                           <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '6px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
-                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#9C6B1F', color: '#23282e', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 4}</span>
-                              <strong style={{color: '#9C6B1F'}}>{r.risk}</strong>
+                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#9C6B1F', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 4}</span>
+                              <strong style={{color: '#9C6B1F'}}>{asText(r.risk ?? r)}</strong>
                             </div>
-                            <p style={{fontSize: '12px', margin: '4px 0', color: '#5a6169'}}>{r.probability} probability | {r.impact}</p>
-                            <p style={{fontSize: '12px', color: '#5A6B48', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
+                            {(r.probability != null || r.impact != null) && (
+                              <p style={{fontSize: '12px', margin: '4px 0', color: '#5a6169'}}>Likelihood: {asText(r.probability)} | Impact: {asText(r.impact)}</p>
+                            )}
+                            {r.mitigation != null && (
+                              <p style={{fontSize: '12px', color: '#5A6B48', marginTop: '8px'}}>Mitigation: {asText(r.mitigation)}</p>
+                            )}
                           </div>
                         ))}
                       </div>

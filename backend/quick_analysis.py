@@ -96,16 +96,21 @@ async def extended_analyze(idea: str, core_analysis: dict) -> dict:
 
     from llm_flexible import (
         analyze_bangladesh_impact, analyze_swot,
-        generate_gtm_strategy, assess_founder_fit
+        generate_gtm_strategy, assess_founder_fit, assess_risks
     )
 
     idea_data = core_analysis.get("idea_extraction", {})
+    sector = idea_data.get("sector", "unknown")
 
+    # Each extended section is its own independently testable service call
+    # (rule 13). A failed section is stored as {} so the frontend shows an
+    # honest "not available" state instead of a fabricated result (rule 9).
     tasks = [
-        asyncio.to_thread(analyze_bangladesh_impact, idea, idea_data.get("sector", "unknown")),
-        asyncio.to_thread(analyze_swot, idea, idea_data.get("sector", "unknown")),
-        asyncio.to_thread(generate_gtm_strategy, idea, idea_data.get("sector", "unknown")),
-        asyncio.to_thread(assess_founder_fit, idea, idea_data.get("sector", "unknown")),
+        asyncio.to_thread(analyze_bangladesh_impact, idea, sector),
+        asyncio.to_thread(analyze_swot, idea, sector),
+        asyncio.to_thread(generate_gtm_strategy, idea, sector),
+        asyncio.to_thread(assess_founder_fit, idea, sector),
+        asyncio.to_thread(assess_risks, idea, sector),
     ]
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -114,6 +119,7 @@ async def extended_analyze(idea: str, core_analysis: dict) -> dict:
     core_analysis["swot_analysis"] = results[1] if not isinstance(results[1], Exception) else {}
     core_analysis["go_to_market"] = results[2] if not isinstance(results[2], Exception) else {}
     core_analysis["founder_fit"] = results[3] if not isinstance(results[3], Exception) else {}
+    core_analysis["risk_assessment"] = results[4] if not isinstance(results[4], Exception) else {}
     core_analysis["analysis_mode"] = "extended"
 
     # Now calculate full financial projections
