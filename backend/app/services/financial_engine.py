@@ -28,15 +28,43 @@ class FinancialProjections:
         self.months = 36  # 3 years
 
     def generate_projections(self) -> Dict[str, Any]:
-        """Generate complete financial projections"""
+        """Generate complete financial projections.
+
+        Verdict fields (safety margin, breakeven timeline, unit economics
+        health) are computed from the projected numbers, never asserted.
+        """
+        revenue = self._project_revenue()
+        unit_economics = self._calculate_unit_economics()
+        cash_flow = self._generate_cash_flow()
+        break_even = self._calculate_break_even()
+
+        # Breakeven timeline from the actual cash curve, not a canned string
+        breakeven_month = cash_flow.get('cash_breakeven_month')
+        break_even['breakeven_timeline_months'] = (
+            f'Month {breakeven_month}' if breakeven_month else 'Not reached within 36 months'
+        )
+
+        # Safety margin from month-12 revenue vs the computed breakeven revenue
+        month_12_revenue = revenue['monthly'][11]['monthly_revenue']
+        be_revenue = break_even['breakeven_monthly_revenue']
+        ratio = (month_12_revenue / be_revenue) if be_revenue > 0 else 0
+        if ratio >= 2:
+            break_even['safety_margin'] = f'Strong: month 12 revenue is {ratio:.1f}x breakeven'
+        elif ratio >= 1.2:
+            break_even['safety_margin'] = f'Adequate: month 12 revenue is {ratio:.1f}x breakeven'
+        elif ratio >= 1:
+            break_even['safety_margin'] = f'Thin: month 12 revenue is {ratio:.1f}x breakeven'
+        else:
+            break_even['safety_margin'] = f'Below breakeven at month 12 ({ratio:.1f}x)'
+
         return {
-            'revenue_projections': self._project_revenue(),
-            'unit_economics': self._calculate_unit_economics(),
+            'revenue_projections': revenue,
+            'unit_economics': unit_economics,
             'pnl_statement': self._generate_pnl(),
-            'cash_flow': self._generate_cash_flow(),
-            'break_even': self._calculate_break_even(),
+            'cash_flow': cash_flow,
+            'break_even': break_even,
             'sensitivity': self._sensitivity_analysis(),
-            'key_metrics': self._calculate_key_metrics()
+            'key_metrics': self._calculate_key_metrics(unit_economics)
         }
 
     def _project_revenue(self) -> Dict[str, Any]:
@@ -109,7 +137,7 @@ class FinancialProjections:
             'lifetime_value': round(ltv),
             'payback_period_months': round(payback_months, 1),
             'ltv_cac_ratio': round(ltv_cac_ratio, 2),
-            'churn_rate_assumed': 3.0,  # 3% monthly churn
+            'churn_rate_assumed': self.assumptions.get('churn_rate_pct', 3.0),
             'notes': 'Based on projected revenue and cost assumptions'
         }
 
@@ -184,6 +212,7 @@ class FinancialProjections:
 
         cash_flow = []
         cumulative_cash = initial_capital
+        cumulative_operating = 0.0
 
         for month_data in revenue_proj['monthly'][:36]:
             revenue = month_data['monthly_revenue']
@@ -192,6 +221,7 @@ class FinancialProjections:
 
             net_monthly_cash = revenue - cogs - operating_costs
             cumulative_cash += net_monthly_cash
+            cumulative_operating += net_monthly_cash
 
             cash_flow.append({
                 'month': month_data['month'],
@@ -199,13 +229,16 @@ class FinancialProjections:
                 'costs': round(cogs + operating_costs),
                 'net_cash_flow': round(net_monthly_cash),
                 'cumulative_cash': round(cumulative_cash),
+                'cumulative_operating_cash': round(cumulative_operating),
                 'runway_status': 'Positive' if cumulative_cash > 0 else 'Negative'
             })
 
-        # Find break-even month
+        # Break-even: first month where cumulative OPERATING cash turns
+        # positive. Measuring total cash would count the initial capital
+        # and mislabel month 1 as break-even.
         breakeven_month = None
         for cf in cash_flow:
-            if cf['cumulative_cash'] > 0 and (breakeven_month is None):
+            if cf['cumulative_operating_cash'] > 0 and (breakeven_month is None):
                 breakeven_month = cf['month']
 
         return {
@@ -240,34 +273,51 @@ class FinancialProjections:
         }
 
     def _sensitivity_analysis(self) -> Dict[str, Any]:
-        """Sensitivity analysis for key variables"""
+        """Sensitivity analysis around this idea's own base growth rate.
+
+        Scenarios are multiples of the idea-specific base rate, and the
+        base rate is restored afterward so later calculations are not
+        polluted by the last scenario.
+        """
+        base_growth = self.assumptions.get('monthly_growth_rate', 0.03)
         base_revenue = self._project_revenue()['total_3_year']
-        growth_rates = [0.01, 0.03, 0.05, 0.08, 0.10]
+        scenarios_spec = [
+            (0.5, 'Conservative'),
+            (0.75, 'Cautious'),
+            (1.0, 'Base'),
+            (1.5, 'Optimistic'),
+            (2.0, 'Aggressive'),
+        ]
 
         sensitivity = []
-
-        for growth in growth_rates:
-            self.assumptions['monthly_growth_rate'] = growth
-            proj_revenue = self._project_revenue()['total_3_year']
-            variance = ((proj_revenue - base_revenue) / base_revenue * 100) if base_revenue > 0 else 0
-
-            sensitivity.append({
-                'growth_rate_pct': round(growth * 100, 1),
-                'total_3_year_revenue': round(proj_revenue),
-                'variance_from_base_pct': round(variance, 1),
-                'scenario': 'Conservative' if growth < 0.03 else 'Base' if growth == 0.03 else 'Optimistic'
-            })
+        try:
+            for multiple, label in scenarios_spec:
+                growth = base_growth * multiple
+                self.assumptions['monthly_growth_rate'] = growth
+                proj_revenue = self._project_revenue()['total_3_year']
+                variance = ((proj_revenue - base_revenue) / base_revenue * 100) if base_revenue > 0 else 0
+                sensitivity.append({
+                    'growth_rate_pct': round(growth * 100, 1),
+                    'total_3_year_revenue': round(proj_revenue),
+                    'variance_from_base_pct': round(variance, 1),
+                    'scenario': label
+                })
+        finally:
+            self.assumptions['monthly_growth_rate'] = base_growth
 
         return {
             'scenarios': sensitivity,
             'best_case': sensitivity[-1],
-            'base_case': sensitivity[1],
+            'base_case': sensitivity[2],
             'worst_case': sensitivity[0]
         }
 
-    def _calculate_key_metrics(self) -> Dict[str, Any]:
-        """Calculate key performance metrics"""
-        revenue = self._project_revenue()
+    def _calculate_key_metrics(self, unit_economics: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate key performance metrics.
+
+        Unit economics health is derived from the actual LTV:CAC ratio,
+        never asserted.
+        """
         pnl = self._generate_pnl()
         cashflow = self._generate_cash_flow()
 
@@ -276,66 +326,201 @@ class FinancialProjections:
 
         cagr = (((year_3_revenue / year_1_revenue) ** (1/2)) - 1) * 100 if year_1_revenue > 0 else 0
 
+        ltv_cac = unit_economics.get('ltv_cac_ratio', 0)
+        if ltv_cac >= 3:
+            health = 'Strong'
+        elif ltv_cac >= 1.5:
+            health = 'Moderate'
+        else:
+            health = 'Weak'
+
+        first_profitable = next(
+            (y['year'] for y in pnl['annual_summary'] if y['net_income'] > 0), None
+        )
+        profitability = (
+            f'Profitable by Year {first_profitable}' if first_profitable
+            else 'Not profitable within 3 years'
+        )
+
         return {
             'revenue_cagr_pct': round(cagr, 1),
-            'month_to_profitability': pnl['annual_summary'][0]['profitability_status'] + ' by Year 1',
+            'month_to_profitability': profitability,
             'gross_margin_year_3': pnl['annual_summary'][2]['gross_margin_pct'],
             'net_margin_year_3': pnl['annual_summary'][2]['net_margin_pct'],
             'cash_position_year_3': cashflow['final_cash_position'],
-            'unit_economics_health': 'Strong',
+            'unit_economics_health': health,
             'recommendation': 'Track metrics quarterly and adjust accordingly'
         }
 
 
+# Cost-structure archetypes with BD-plausible BDT figures. The extracted
+# sector slug (for example "agritech" or "cleaning_service") is matched by
+# keyword; the old table used capitalized keys that never matched and so
+# served identical Technology numbers for every idea. Order matters: the
+# most specific archetypes come first, and the generic tech keywords come
+# last so "agritech" is not swallowed by the "tech" substring.
+SECTOR_ARCHETYPES: Dict[str, Dict[str, Any]] = {
+    'agritech': {
+        'keywords': ['agri', 'farm', 'crop', 'fishery', 'livestock'],
+        'monthly_revenue_month_1': 200000, 'monthly_growth_rate': 0.04,
+        'customer_acquisition_cost': 500, 'cac_reduction_rate': 0.02,
+        'lifetime_value_months': 8, 'fixed_costs_monthly': 120000,
+        'variable_cost_percentage': 0.55, 'initial_investment': 4000000,
+        'team_size_month_1': 6, 'avg_salary': 30000,
+    },
+    'food': {
+        'keywords': ['food', 'kitchen', 'restaurant', 'meal', 'catering'],
+        'monthly_revenue_month_1': 300000, 'monthly_growth_rate': 0.04,
+        'customer_acquisition_cost': 400, 'cac_reduction_rate': 0.02,
+        'lifetime_value_months': 6, 'fixed_costs_monthly': 180000,
+        'variable_cost_percentage': 0.60, 'initial_investment': 2500000,
+        'team_size_month_1': 8, 'avg_salary': 25000,
+    },
+    'logistics': {
+        'keywords': ['logistic', 'delivery', 'transport', 'courier', 'marketplace', 'supply'],
+        'monthly_revenue_month_1': 250000, 'monthly_growth_rate': 0.05,
+        'customer_acquisition_cost': 800, 'cac_reduction_rate': 0.02,
+        'lifetime_value_months': 10, 'fixed_costs_monthly': 200000,
+        'variable_cost_percentage': 0.45, 'initial_investment': 5000000,
+        'team_size_month_1': 8, 'avg_salary': 35000,
+    },
+    'hardware': {
+        'keywords': ['energy', 'solar', 'manufactur', 'hardware', 'device', 'electronics'],
+        'monthly_revenue_month_1': 400000, 'monthly_growth_rate': 0.03,
+        'customer_acquisition_cost': 3000, 'cac_reduction_rate': 0.02,
+        'lifetime_value_months': 24, 'fixed_costs_monthly': 300000,
+        'variable_cost_percentage': 0.60, 'initial_investment': 10000000,
+        'team_size_month_1': 10, 'avg_salary': 40000,
+    },
+    'retail': {
+        'keywords': ['retail', 'commerce', 'fashion', 'shop', 'store'],
+        'monthly_revenue_month_1': 500000, 'monthly_growth_rate': 0.04,
+        'customer_acquisition_cost': 800, 'cac_reduction_rate': 0.01,
+        'lifetime_value_months': 6, 'fixed_costs_monthly': 250000,
+        'variable_cost_percentage': 0.55, 'initial_investment': 6000000,
+        'team_size_month_1': 12, 'avg_salary': 30000,
+    },
+    'services': {
+        'keywords': ['service', 'cleaning', 'health', 'education', 'consult', 'care', 'repair'],
+        'monthly_revenue_month_1': 200000, 'monthly_growth_rate': 0.04,
+        'customer_acquisition_cost': 2000, 'cac_reduction_rate': 0.02,
+        'lifetime_value_months': 12, 'fixed_costs_monthly': 130000,
+        'variable_cost_percentage': 0.40, 'initial_investment': 1500000,
+        'team_size_month_1': 6, 'avg_salary': 35000,
+    },
+    'tech': {
+        'keywords': ['tech', 'software', 'saas', 'fintech', 'edtech', 'app', 'platform', 'ai'],
+        'monthly_revenue_month_1': 150000, 'monthly_growth_rate': 0.06,
+        'customer_acquisition_cost': 1500, 'cac_reduction_rate': 0.03,
+        'lifetime_value_months': 18, 'fixed_costs_monthly': 180000,
+        'variable_cost_percentage': 0.20, 'initial_investment': 3000000,
+        'team_size_month_1': 4, 'avg_salary': 50000,
+    },
+}
+
+GENERAL_ARCHETYPE: Dict[str, Any] = {
+    'monthly_revenue_month_1': 250000, 'monthly_growth_rate': 0.04,
+    'customer_acquisition_cost': 1500, 'cac_reduction_rate': 0.02,
+    'lifetime_value_months': 12, 'fixed_costs_monthly': 170000,
+    'variable_cost_percentage': 0.40, 'initial_investment': 3500000,
+    'team_size_month_1': 6, 'avg_salary': 35000,
+}
+
+
+def _match_archetype(sector: str) -> tuple:
+    """Match the extracted sector slug to an archetype by keyword.
+
+    Returns (archetype_name, assumptions_copy). Falls back to a general
+    profile when nothing matches, so an unknown sector still projects.
+    """
+    slug = str(sector or '').lower()
+    for name, spec in SECTOR_ARCHETYPES.items():
+        if any(kw in slug for kw in spec['keywords']):
+            assumptions = {k: v for k, v in spec.items() if k != 'keywords'}
+            return name, assumptions
+    return 'general', dict(GENERAL_ARCHETYPE)
+
+
+def _demand_multipliers(score: Any) -> tuple:
+    """Growth and starting-revenue multipliers from the demand score.
+
+    Score 5 is neutral (1.0x); 10 boosts growth 1.4x and revenue 1.3x;
+    1 dampens to roughly 0.7x each. A missing score stays neutral.
+    """
+    if not isinstance(score, (int, float)) or not 1 <= score <= 10:
+        return 1.0, 1.0, None
+    growth_mult = 0.6 + (score / 10) * 0.8
+    revenue_mult = 0.7 + (score / 10) * 0.6
+    return growth_mult, revenue_mult, score
+
+
+def _market_multiplier(market_size: Any) -> tuple:
+    """Starting-revenue multiplier from the extracted market size text."""
+    text = str(market_size or '').lower()
+    if any(w in text for w in ('billion', 'large', 'high', 'significant', 'substantial')):
+        return 1.3, 'large'
+    if any(w in text for w in ('small', 'niche', 'limited')):
+        return 0.75, 'small'
+    if any(w in text for w in ('medium', 'moderate', 'million')):
+        return 1.0, 'medium'
+    return 1.0, 'unknown'
+
+
+def _revenue_model_adjustments(revenue_model: Any) -> tuple:
+    """LTV, churn, and variable-cost adjustments from the revenue model text."""
+    text = str(revenue_model or '').lower()
+    if any(w in text for w in ('subscription', 'recurring', 'saas', 'membership')):
+        return {'ltv_mult': 1.5, 'churn_rate_pct': 2.0, 'variable_delta': 0.0}, 'recurring'
+    if any(w in text for w in ('commission', 'per-order', 'per order', 'transaction', 'per acre', 'per unit', 'fee')):
+        return {'ltv_mult': 0.75, 'churn_rate_pct': 4.0, 'variable_delta': 0.05}, 'transactional'
+    if any(w in text for w in ('one-time', 'one time', 'sale of', 'selling')):
+        return {'ltv_mult': 0.25, 'churn_rate_pct': 8.0, 'variable_delta': 0.0}, 'one-time'
+    return {'ltv_mult': 1.0, 'churn_rate_pct': 3.0, 'variable_delta': 0.0}, 'unclassified'
+
+
 def calculate_financial_projections(idea_analysis: Dict[str, Any]) -> Dict[str, Any]:
+    """Build idea-specific projections from fields the analysis already has.
+
+    Deterministic: sector picks a cost-structure archetype, then the demand
+    score, market size, and revenue model modulate it. The exact assumptions
+    used and what drove them are attached to the output for transparency
+    (rule 10). No LLM calls are made here.
     """
-    Main function to calculate financial projections from an analysis
-    """
+    extraction = idea_analysis.get('idea_extraction', {}) or {}
+    demand = idea_analysis.get('demand_analysis', {}) or {}
 
-    # Extract assumptions from analysis or use defaults
-    sector = idea_analysis.get('idea_extraction', {}).get('sector', 'Technology')
+    archetype_name, assumptions = _match_archetype(extraction.get('sector'))
+    growth_mult, revenue_mult, demand_score = _demand_multipliers(demand.get('score'))
+    market_mult, market_read = _market_multiplier(demand.get('market_size'))
+    model_adj, model_read = _revenue_model_adjustments(extraction.get('revenue_model'))
 
-    # Default assumptions by sector
-    default_assumptions = {
-        'Technology': {
-            'monthly_revenue_month_1': 500000,
-            'monthly_growth_rate': 0.08,
-            'customer_acquisition_cost': 2000,
-            'cac_reduction_rate': 0.03,
-            'lifetime_value_months': 24,
-            'fixed_costs_monthly': 200000,
-            'variable_cost_percentage': 0.25,
-            'initial_investment': 5000000,
-            'team_size_month_1': 5,
-            'avg_salary': 50000
-        },
-        'Service': {
-            'monthly_revenue_month_1': 300000,
-            'monthly_growth_rate': 0.05,
-            'customer_acquisition_cost': 5000,
-            'cac_reduction_rate': 0.02,
-            'lifetime_value_months': 12,
-            'fixed_costs_monthly': 150000,
-            'variable_cost_percentage': 0.40,
-            'initial_investment': 2000000,
-            'team_size_month_1': 8,
-            'avg_salary': 40000
-        },
-        'Retail': {
-            'monthly_revenue_month_1': 1000000,
-            'monthly_growth_rate': 0.04,
-            'customer_acquisition_cost': 1000,
-            'cac_reduction_rate': 0.01,
-            'lifetime_value_months': 6,
-            'fixed_costs_monthly': 300000,
-            'variable_cost_percentage': 0.55,
-            'initial_investment': 10000000,
-            'team_size_month_1': 15,
-            'avg_salary': 35000
-        }
-    }
-
-    assumptions = default_assumptions.get(sector, default_assumptions['Technology'])
+    assumptions['monthly_growth_rate'] = round(assumptions['monthly_growth_rate'] * growth_mult, 4)
+    assumptions['monthly_revenue_month_1'] = round(
+        assumptions['monthly_revenue_month_1'] * revenue_mult * market_mult
+    )
+    assumptions['lifetime_value_months'] = max(2, round(assumptions['lifetime_value_months'] * model_adj['ltv_mult']))
+    assumptions['variable_cost_percentage'] = min(0.85, assumptions['variable_cost_percentage'] + model_adj['variable_delta'])
+    assumptions['churn_rate_pct'] = model_adj['churn_rate_pct']
 
     engine = FinancialProjections(assumptions)
-    return engine.generate_projections()
+    projections = engine.generate_projections()
+
+    projections['assumptions_used'] = {
+        'sector_archetype': archetype_name,
+        'monthly_revenue_month_1': assumptions['monthly_revenue_month_1'],
+        'monthly_growth_rate_pct': round(assumptions['monthly_growth_rate'] * 100, 2),
+        'customer_acquisition_cost': assumptions['customer_acquisition_cost'],
+        'lifetime_value_months': assumptions['lifetime_value_months'],
+        'variable_cost_percentage': round(assumptions['variable_cost_percentage'], 2),
+        'fixed_costs_monthly': assumptions['fixed_costs_monthly'],
+        'initial_investment': assumptions['initial_investment'],
+        'churn_rate_pct': assumptions['churn_rate_pct'],
+        'drivers': {
+            'sector': extraction.get('sector'),
+            'demand_score': demand_score,
+            'market_size_read': market_read,
+            'revenue_model_read': model_read,
+        },
+        'note': 'Deterministic estimates from sector archetype adjusted by demand score, market size, and revenue model. Not sourced financial data.',
+    }
+    return projections
