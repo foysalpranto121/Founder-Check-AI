@@ -120,8 +120,6 @@ cd frontend && npm run dev
 
 - Sourced, citable regulatory and market data instead of purely AI-generated figures
 - Bangla language mode for the analysis output
-- Idea-specific financial projections
-- Wiring the risk assessment module into the core pipeline
 
 ---
 

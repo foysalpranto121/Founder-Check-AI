@@ -45,6 +45,24 @@ interface FinancialData {
     net_margin_year_3: number;
     cash_position_year_3: number;
   };
+  assumptions_used?: {
+    sector_archetype: string;
+    monthly_revenue_month_1: number;
+    monthly_growth_rate_pct: number;
+    customer_acquisition_cost: number;
+    lifetime_value_months: number;
+    variable_cost_percentage: number;
+    fixed_costs_monthly: number;
+    initial_investment: number;
+    churn_rate_pct: number;
+    drivers: {
+      sector: string | null;
+      demand_score: number | null;
+      market_size_read: string;
+      revenue_model_read: string;
+    };
+    note: string;
+  };
 }
 
 interface Props {
@@ -370,6 +388,39 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
           </div>
         </div>
       )}
+
+      {/* Transparency: show the archetype and each assumption, plus the
+          idea fields that moved them, so no number is a black box (rule 10). */}
+      {financial.assumptions_used && (() => {
+        const au = financial.assumptions_used!;
+        const d = au.drivers || ({} as typeof au.drivers);
+        const rows: [string, string][] = [
+          ['Sector archetype', String(au.sector_archetype)],
+          ['Starting monthly revenue', formatCurrency(au.monthly_revenue_month_1)],
+          ['Monthly growth rate', `${au.monthly_growth_rate_pct}%`],
+          ['Customer acquisition cost', formatCurrency(au.customer_acquisition_cost)],
+          ['Customer lifetime', `${au.lifetime_value_months} months`],
+          ['Variable cost', `${Math.round(au.variable_cost_percentage * 100)}% of revenue`],
+          ['Monthly fixed costs', formatCurrency(au.fixed_costs_monthly)],
+          ['Initial investment', formatCurrency(au.initial_investment)],
+          ['Monthly churn', `${au.churn_rate_pct}%`],
+        ];
+        return (
+          <div style={{ marginTop: '30px', padding: '20px', background: '#ffffff', border: '1px solid rgba(35, 40, 46, 0.16)', borderRadius: '2px' }}>
+            <h4 style={{ color: '#23282e', marginBottom: '6px' }}>How these projections were calculated</h4>
+            <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '16px' }}>{au.note}</p>
+            {rows.map(([label, value]) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', padding: '6px 0', borderBottom: '1px solid rgba(35, 40, 46, 0.09)', fontSize: '13px' }}>
+                <span style={{ color: '#5a6169' }}>{label}</span>
+                <span style={{ color: '#23282e', fontWeight: 600, fontFamily: "'Courier Prime', monospace" }}>{value}</span>
+              </div>
+            ))}
+            <p style={{ fontSize: '12px', color: '#5a6169', marginTop: '14px', lineHeight: '1.6' }}>
+              Adjusted from the archetype by: sector {d.sector ?? 'unknown'}, demand score {d.demand_score ?? 'not scored'}, market size {d.market_size_read || 'unknown'}, revenue model {d.revenue_model_read || 'unknown'}.
+            </p>
+          </div>
+        );
+      })()}
     </div>
   );
 };
