@@ -180,6 +180,22 @@ function App() {
     setPage('home')
   }
 
+  // Logo click returns to the app home. For a logged-in user that is the
+  // fresh analyze page (the closest equivalent to the landing page); the
+  // current analysis stays saved in history and can be reopened.
+  const goHome = () => {
+    setAnalysis(null)
+    setExtendedStatus('idle')
+    setError(null)
+    setPage('home')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Smooth-scroll a landing section into view by id.
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   const exportToPDF = () => {
     if (!analysis) {
       alert('Run an analysis first, then download its report.')
@@ -341,14 +357,21 @@ function App() {
       <div className="landing">
         <div className="landing-header">
           <div className="landing-content">
-            <div className="landing-logo">
+            <div
+              className="landing-logo"
+              role="button"
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) } }}
+            >
               <LogoIcon size={28} />
               FounderCheck
             </div>
             <div className="landing-nav-links">
-              <button className="nav-link">Features</button>
-              <button className="nav-link">Pricing</button>
-              <button className="nav-link">About</button>
+              <button className="nav-link" onClick={() => scrollToSection('features-section')}>Features</button>
+              <button className="nav-link" onClick={() => scrollToSection('pricing-section')}>Pricing</button>
+              <button className="nav-link" onClick={() => scrollToSection('about-section')}>About</button>
             </div>
             <div className="landing-right"></div>
           </div>
@@ -582,7 +605,7 @@ function App() {
             </div>
           </section>
 
-          <section className="modules">
+          <section className="modules" id="about-section">
             <h2>What We Analyze</h2>
             <div className="modules-grid">
               <div className="module">
@@ -694,7 +717,14 @@ function App() {
       <div className="app">
         <header className="header">
           <div className="header-left">
-            <div className="logo">
+            <div
+              className="logo"
+              role="button"
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+              onClick={goHome}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goHome() } }}
+            >
               <LogoIcon size={20} />
               FounderCheck
             </div>
@@ -745,7 +775,14 @@ function App() {
       <div className="app">
         <header className="header">
           <div className="header-left">
-            <div className="logo">
+            <div
+              className="logo"
+              role="button"
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+              onClick={goHome}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goHome() } }}
+            >
               <LogoIcon size={20} />
               FounderCheck
             </div>
@@ -824,7 +861,14 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-left">
-          <div className="logo">FounderCheck</div>
+          <div
+            className="logo"
+            role="button"
+            tabIndex={0}
+            style={{ cursor: 'pointer' }}
+            onClick={goHome}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goHome() } }}
+          >FounderCheck</div>
         </div>
         <nav className="nav">
           <button className="nav-item active">Analyze</button>
