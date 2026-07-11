@@ -120,7 +120,7 @@ async def root():
         "message": "FounderCheck API is running"
     }
 
-@app.get("/health", response_model=HealthCheck)
+@app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthCheck)
 async def health_check():
     """Health check with API key status"""
     anthropic_key = "configured" if os.getenv("ANTHROPIC_API_KEY") else "missing"
